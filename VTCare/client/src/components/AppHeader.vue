@@ -41,7 +41,7 @@
 
 .login-button {
   display: inline-block;
-  margin-left: 1000px;
+  margin-left: 1500px;
 }
 .login-button:visited,
 .login-button:hover {

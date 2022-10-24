@@ -1,3 +1,58 @@
+<script setup lang="ts">
+import { defineComponent } from "vue";
+import { BookItem } from "@/types";
+import SearchBar from "@/components/SearchBar.vue";
+import HomeSuggestedDoctorList from "@/components/HomeSuggestedDoctorList.vue";
+
+// export default defineComponent({
+//   name: "HomeView",
+//   components: { HomeSuggestedDoctorList, SearchBar },
+// });
+
+const bookList: BookItem[] = [
+  {
+    doctorId: 1001,
+    name: "Doctor1",
+    author: "Primary Doctor",
+    price: 873,
+    isPublic: true,
+    isSuggested: true,
+  },
+  {
+    doctorId: 1002,
+    name: "Doctor2",
+    author: "Primary Doctor",
+    price: 363,
+    isPublic: false,
+    isSuggested: true,
+  },
+  {
+    doctorId: 1003,
+    name: "Doctor3",
+    author: "Primary Doctor",
+    price: 623,
+    isPublic: false,
+    isSuggested: true,
+  },
+  {
+    doctorId: 1004,
+    name: "Doctor4",
+    author: "Primary Doctor",
+    price: 714,
+    isPublic: true,
+    isSuggested: true,
+  },
+  {
+    doctorId: 1005,
+    name: "Doctor5",
+    author: "Primary Doctor",
+    price: 944,
+    isPublic: true,
+    isSuggested: true,
+  },
+];
+</script>
+
 <template>
   <div class="home">
     <!-- The hero image with browse button -->
@@ -17,17 +72,34 @@
         </div>
       </div>
     </section>
+
+    <!-- This is the search bar for finding doctors -->
+    <section>
+      <search-bar></search-bar>
+    </section>
+
+    <!-- This is the recommended doctors on the home page -->
+    <section>
+      <home-suggested-doctor-list
+        :book-list="bookList"
+      ></home-suggested-doctor-list>
+    </section>
   </div>
+
+  <section class="hero is-dark">
+    <div class="hero-body">
+      <div class="container">
+        <h1 class="title">
+          Connect with a licensed therapist for online video or in-person
+          therapy sessions.
+        </h1>
+        <div class="button-block">
+          <button class="banner-button">meet with a therapist</button>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-
-export default defineComponent({
-  name: "HomeView",
-  components: {},
-});
-</script>
 
 <style scoped>
 .hero {
@@ -38,6 +110,7 @@ export default defineComponent({
   background-repeat: no-repeat;
   height: 400px;
 }
+
 .hero-body {
   background-color: #2c5049;
 }

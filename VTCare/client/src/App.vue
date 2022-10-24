@@ -1,16 +1,17 @@
 <script setup lang="ts">
 import AppHeader from "@/components/AppHeader";
 import AppFooter from "@/components/AppFooter";
+import { provide } from "vue";
+import { useRoute } from "vue-router";
+const route = useRoute();
 </script>
 
 <template>
-  <!--  <nav>-->
-  <!--    <router-link to="/">Home</router-link> |-->
-  <!--    <router-link to="/about">About</router-link>-->
-  <!--  </nav>-->
-  <app-header></app-header>
-  <router-view />
-  <app-footer></app-footer>
+  <div id="app" :class="{ appHero: route.name === 'home-view' }">
+    <app-header></app-header>
+    <router-view />
+    <app-footer></app-footer>
+  </div>
 </template>
 
 <style>
