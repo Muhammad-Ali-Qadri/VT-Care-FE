@@ -1,9 +1,16 @@
+<script setup lang="ts">
+import AppHeader from "@/components/AppHeader";
+import AppFooter from "@/components/AppFooter";
+</script>
+
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
+  <!--  <nav>-->
+  <!--    <router-link to="/">Home</router-link> |-->
+  <!--    <router-link to="/about">About</router-link>-->
+  <!--  </nav>-->
+  <app-header></app-header>
   <router-view />
+  <app-footer></app-footer>
 </template>
 
 <style>
