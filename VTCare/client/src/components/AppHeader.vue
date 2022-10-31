@@ -66,7 +66,9 @@
         <router-link to="/" style="color: #2c5049">VT Care</router-link>
       </h1>
       <h1 class="login-button">
-        <router-link to="/" style="color: #2c5049">LOGIN</router-link>
+        <router-link to="/register" style="color: #2c5049"
+          >REGISTER / LOGIN</router-link
+        >
       </h1>
       <button class="sign-up">meet with a therapist</button>
     </div>
