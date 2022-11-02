@@ -1,4 +1,6 @@
 <script>
+import provider from "@/services/provider";
+
 export default {
   data() {
     return {
@@ -56,6 +58,20 @@ export default {
         this.formSubmitted = true;
         alert("You are now registered");
       }
+    },
+    register_user: function (){
+      console.log(this.name)
+      provider.registerProvider({
+        name: this.name,
+        email: this.email,
+        password: this.password,
+        gender: this.gender,
+        dob: this.dateOfBirth,
+        address: "I live here, VA USA",
+        contact: "804-123-4567",
+        experience: 0,
+        specialization: "Gynecologist"
+      });
     },
   },
 };
@@ -179,7 +195,7 @@ span {
         <h1 class="error-msg" v-if="!isValidRole">Please select a role</h1>
       </div>
 
-      <input class="submit" type="submit" value="submit" />
+      <input class="submit" type="submit" value="submit" @click="register_user" />
     </form>
     <br />
 
