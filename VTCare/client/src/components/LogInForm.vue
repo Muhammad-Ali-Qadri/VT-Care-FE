@@ -1,4 +1,9 @@
 <script>
+import provider from "@/services/provider";
+import { BookItem } from "@/types";
+
+
+
 export default {
   data() {
     return {
@@ -149,7 +154,7 @@ span {
         <h1 class="error-msg" v-if="!isValidRole">Please select a role</h1>
       </div>
 
-      <input class="submit" type="submit" value="login" />
+      <input class="submit" type="submit" value="login" @click="register_user" />
     </form>
     <br />
     <div style="height: 300px"></div>

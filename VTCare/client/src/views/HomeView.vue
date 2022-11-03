@@ -3,11 +3,15 @@ import { defineComponent } from "vue";
 import { BookItem } from "@/types";
 import SearchBar from "@/components/SearchBar.vue";
 import HomeSuggestedDoctorList from "@/components/HomeSuggestedDoctorList.vue";
+import provider from "@/services/provider";
 
 // export default defineComponent({
 //   name: "HomeView",
 //   components: { HomeSuggestedDoctorList, SearchBar },
 // });
+
+const Providers = provider.getProviders();
+console.log(Providers);
 
 const bookList: BookItem[] = [
   {
