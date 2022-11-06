@@ -112,7 +112,7 @@ const bookList: BookItem[] = [
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  height: 400px;
+  height: 22em;
 }
 
 .hero-body {
@@ -120,10 +120,9 @@ const bookList: BookItem[] = [
 }
 
 .hero-body .title {
-  text-shadow: 4px 4px 4px rgba(0, 0, 0, 0.6);
-  padding: 40px 0 5px 0;
-  font-size: 40px;
-  margin-top: 20px;
+  text-shadow: 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.6);
+  font-size: 2em;
+  margin-top: 0.1em;
   align-self: center;
   font-weight: bold;
   max-width: 50%;
@@ -146,12 +145,12 @@ const bookList: BookItem[] = [
   background-color: #9ad5c9;
   color: black;
   cursor: pointer;
-  border-radius: 5px;
+  border-radius: 0.1em;
   text-decoration: none;
   font-weight: bold;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 10px 20px 10px 20px;
+  padding: 1em 2em 1em 2em;
   font-size: 0.8rem;
   border: none;
 }

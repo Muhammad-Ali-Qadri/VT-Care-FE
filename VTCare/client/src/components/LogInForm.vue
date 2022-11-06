@@ -1,8 +1,6 @@
 <script>
 import provider from "@/services/provider";
-import { BookItem } from "@/types";
-
-
+import login from "@/services/login";
 
 export default {
   data() {
@@ -61,6 +59,28 @@ export default {
         this.formSubmitted = true;
         alert("You are now registered");
       }
+    },
+    login_user: function () {
+      let temp = this.role === "Provider";
+
+      login.loginRequest({
+          email: this.email,
+          password: this.password,
+          isProviderLogin: temp
+        }).then( (data) => {
+          console.log("Data: " , data);
+          if(data === 0){
+            this.$router.push({name: "login"});
+          }
+          else{
+            this.$router.push({name: "home"});
+          }
+      })
+      .catch( (reason) => {
+        this.checkoutStatus = "SERVER_ERROR";
+        console.log("Error placing order", reason);
+      });
+
     },
   },
 };
@@ -154,7 +174,7 @@ span {
         <h1 class="error-msg" v-if="!isValidRole">Please select a role</h1>
       </div>
 
-      <input class="submit" type="submit" value="login" @click="register_user" />
+      <input class="submit" type="submit" value="login" @click="login_user"/>
     </form>
     <br />
     <div style="height: 300px"></div>
@@ -162,12 +182,9 @@ span {
     <!-- test for successfully submitting the form-->
     <div v-if="formSubmitted">
       <h3>Form Submitted</h3>
-      <p>Name: {{ name }}</p>
-      <p>dateOfBirth: {{ dateOfBirth }}</p>
       <p>Email: {{ email }}</p>
       <p>Password: {{ password }}</p>
-      <p>Gender: {{ gender }}</p>
-      <p>Role: {{ role }}</p>
+      <p></p>
     </div>
   </div>
 </template>

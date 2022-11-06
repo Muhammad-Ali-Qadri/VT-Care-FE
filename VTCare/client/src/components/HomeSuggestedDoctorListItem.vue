@@ -13,7 +13,7 @@ const bookImageFileName = function (book: BookItem): string {
 </script>
 <style scoped>
 .book-box-suggested:first-child {
-  margin-left: 500px;
+
 }
 
 .book-box-suggested {
@@ -22,13 +22,14 @@ const bookImageFileName = function (book: BookItem): string {
   flex-direction: column;
   gap: 0.25em;
   alignment: left;
-  width: 250px;
-  margin-top: 20px;
-  margin-left: 40px;
+  width: 15em;
+  margin-top: 2em;
+  margin-left: 11em;
   /*border: 0.01rem solid #cbcbcb;*/
   /*border-radius: 2px;*/
   padding: 5px;
-  margin-bottom: 400px;
+  margin-bottom: 10em;
+  justify-content: center;
 }
 .doctor-pic {
   border-radius: 50%;
@@ -45,6 +46,12 @@ const bookImageFileName = function (book: BookItem): string {
 
 .book-image-suggested {
   position: relative;
+}
+
+@media (max-width: 600px) {
+  .book-box-suggested {
+    margin-left: 0em;
+  }
 }
 </style>
 
