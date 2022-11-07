@@ -5,23 +5,44 @@ import RegisterFormItem from "@/components/RegisterFormItem.vue";
 <style scoped>
 .register-form {
   text-align: initial;
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: center;
 }
+.registration-header{
+  font-size: 1.1em;
+  margin-left: 37em;
+}
+
+.register-question{
+  margin-left: 40em;
+}
+
+
 .regis-title {
-  font-size: 35px;
+  font-size: 1.5em;
   font-weight: bold;
-  margin-top: 100px;
-  margin-left: 1050px;
+
 }
 .login-title {
-  margin-left: 1050px;
   text-decoration-line: underline;
 }
+
+@media (max-width: 1000px) {
+  .registration-header {
+    margin-left: 1em;
+  }
+  .register-question{
+    margin-left: 1em;
+  }
+}
+
 </style>
 
 <template>
   <div class="register-form">
     <div class="registration-header">
-      <P class="regis-title">let's Get Started</P>
+      <P class="regis-title">Let's Get Started</P>
 
       <p class="login-title">
         <router-link to="/login">Already have one? Log in.</router-link>

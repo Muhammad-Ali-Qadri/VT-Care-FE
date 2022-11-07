@@ -14,14 +14,14 @@ ul {
   gap: 1em;
 }
 .recom-doc-title {
-  text-align: initial;
-  margin: 30px 0 0 500px;
-  font-size: 25px;
+  margin-top: 0.5em;
+  text-align: center;
+  font-size: 2em;
   font-weight: bold;
 }
 .recom-doc-title.sub-title {
   font-weight: normal;
-  font-size: 15px;
+  font-size: 1em;
   margin-top: 0;
   margin-bottom: 30px;
 }
