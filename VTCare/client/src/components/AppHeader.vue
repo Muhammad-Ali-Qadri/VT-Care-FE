@@ -5,27 +5,27 @@
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
-  /*width: 300em;*/
 }
+
 .title-and-logo {
-  display: inline-block;
+  text-align: left;
 }
 .text-logo {
   text-decoration: none;
   font-weight: bolder;
-  font-size: 3em;
+  font-size: 30px;
   font-family: "Bodoni MT", serif;
   display: inline-block;
 }
 .logo {
   float: left;
-  width: 2em;
-  margin-left: 4em;
+  width: 20px;
+  /*margin-left: 250px*/
 }
 .sign-up {
   margin-left: 60px;
   text-align: center;
-  /*display: inline-block;*/
+  display: inline-block;
   background-color: #2c5049;
   color: white;
   padding: 0.3em 1em;
@@ -42,18 +42,18 @@
 .sign-up:hover {
   background-color: #3d6e64;
 }
-
-.login-button {
-  display: inline-block;
-  /*margin-right: 1em;*/
-}
-.login-button:visited,
-.login-button:hover {
-  color: #3d6e64;
+.two-things {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
 }
 
-.register-login{
-  margin-top: 1.5em;
+.meet-button {
+  margin-top : 0.5em;
+}
+
+.user-name{
+  margin-top: 0.5em;
 }
 
 @media (max-width: 600px) {
@@ -61,8 +61,27 @@
     flex-direction: column;
   }
 }
+.logout-btn {
+  margin-top: 0.8em;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
 </style>
-
+<script>
+import {mapState} from "vuex";
+export default {
+  name: "AppHeader",
+  created() {
+    this.$store.dispatch("reloadStore");
+  },
+  methods: {
+    logout: function() {
+      this.$store.dispatch("clearStore");
+    }
+  }
+};
+</script>
 <template>
   <header class="header-class">
     <!-- this is the title and logo -->
@@ -74,13 +93,38 @@
         <router-link to="/" style="color: #2c5049">VT Care</router-link>
       </h1>
     </div>
-    <div class="register-login">
+      <!--
       <h1 class="login-button">
         <router-link to="/register" style="color: #2c5049"
-        >REGISTER / LOGIN</router-link
+          >REGISTER / LOGIN</router-link
         >
       </h1>
-      <button class="sign-up">meet with a therapist</button>
+      -->
+    <div class="two-things">
+      <div>
+      <h1 class="user-name">
+        <router-link
+            v-if="this.$store.state.userObj === null"
+            class="button selected-category-button"
+            :to="{ name: 'register' }"
+        >
+          register/login
+        </router-link>
+        <router-link style="font-weight: bold"
+            v-else
+            :to="{ name: 'home'}"
+        >
+          {{ this.$store.state.userObj.name}}
+        </router-link>
+      </h1>
+      </div>
+      <div v-if="this.$store.state.userObj" class="logout-button" @click="logout">
+        <button class="logout-btn"><i class="fa-solid fa-right-from-bracket fa-xl"></i></button>
+      </div>
+     <div class="meet-button">
+       <button class="sign-up">meet with a therapist</button>
+     </div>
+
     </div>
 
     <!-- this is the login and sign up -->
