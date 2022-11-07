@@ -60,7 +60,7 @@ export default {
         alert("You are now registered");
       }
     },
-    login_user: function () {
+    login_user: async function () {
       let temp = this.role === "Provider";
 
       login.loginRequest({
@@ -73,6 +73,8 @@ export default {
             this.$router.push({name: "login"});
           }
           else{
+            this.$store.dispatch("setUserType", this.role);
+            this.$store.dispatch("setUserObj", data);
             this.$router.push({name: "home"});
           }
       })

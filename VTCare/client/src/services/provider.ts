@@ -47,5 +47,11 @@ export default {
             .catch((reason) => {
                 console.log("Error fetching category data", reason);
             });
-    }
+    },
+    async getProvider(id: number) {
+        const url = apiUrl + "/providers/" +id;
+        console.log("GET from " + url);
+        const temp = await fetch(url);
+            return await temp.json();
+    },
 }
