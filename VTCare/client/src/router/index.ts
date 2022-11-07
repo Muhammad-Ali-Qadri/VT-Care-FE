@@ -2,6 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import RegisterView from "../components/RegisterForm.vue";
 import LoginView from "../components/LogInForm.vue";
+import ProviderListView from "../components/ProviderListItem.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -27,6 +28,11 @@ const routes: Array<RouteRecordRaw> = [
     path: "/login",
     name: "login",
     component: LoginView,
+  },
+  {
+    path: "/providerlist",
+    name: "providerlist",
+    component: ProviderListView,
   },
 ];
 
