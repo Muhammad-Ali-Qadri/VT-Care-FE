@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import RegisterView from "../components/RegisterForm.vue";
 import LoginView from "../components/LogInForm.vue";
-import ProviderListView from "../components/providerListItem.vue";
+import ProviderListView from "../components/providerList.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {

@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+
 import provider from "@/services/provider";
 import SearchBar from "@/components/SearchBar.vue";
 
@@ -16,14 +17,15 @@ export default {
       this.listItems = res;
     },
   },
-  mounted() {
+  created() {
     this.getData();
   },
 };
 
 </script>
+
 <style>
-.book-box {
+.provider-box {
   display: flex;
   flex-direction: row;
   background-color: white;
@@ -31,23 +33,28 @@ export default {
   gap: 0.25em;
   min-height: 11.2em;
 }
-#book-boxes {
+
+#provider-boxes {
   display: flex;
   flex-wrap: wrap;
   padding: 0.5em;
   gap: 0.75em;
-  margin-left: 15em;
+  margin-left: 5em;
 }
+
 .provider-info {
   display: flex;
   flex-direction: column;
   gap: 2em;
   padding: 0.65em;
+  width: 12em;
 }
+
 .name-specialization {
   display: flex;
+  justify-content: top;
   flex-direction: column;
-  gap: 0.25em;
+  gap: 0.2em;
   text-align: left;
 }
 
@@ -60,10 +67,12 @@ export default {
   font-style: italic;
   font-size: 15px;
 }
+
 .provider-image img {
   width: 130px;
   height: 110px;
 }
+
 .provider-pic {
   border-radius: 50%;
 }
@@ -71,29 +80,20 @@ export default {
 .appointment-times {
   display: flex;
   flex-direction: column;
-  gap: 0.3em;
-  margin-left: 7em;
+  gap: 0.2em;
+  margin-left: 2em;
 }
-.first {
-  display: flex;
-  gap: 0.3em;
-}
-.second {
-  display: flex;
-  gap: 0.3em;
-}
-@media (max-width: 800px) {
-  .book-box {
-    min-width: 16.5em;
-    min-height: 14.2em;
-  }
 
+.slots-row {
+  display: flex;
+  gap: 0.3em;
 }
+
 .slot {
   display: flex;
   width: 4.5em;
   height: 7em;
-  border-radius: 5px;
+  border-radius: 0.6em;
   cursor: pointer;
   background-color: greenyellow;
   border: none;
@@ -101,29 +101,34 @@ export default {
   flex-direction: column;
   text-align: left;
 }
-.slot:hover {
+
+.slot:enabled:hover {
   background-color: midnightblue;
   color: white;
 }
-#slot1,
-#slot2,
-#slot3,
-#slot4,
-#slot5 {
+
+.slot:disabled {
   background-color: lightgrey;
+  cursor: initial;
+  opacity: 70%;
+}
+
+@media (max-width: 800px) {
+  .provider-box {
+    min-width: 16.5em;
+    min-height: 14.2em;
+  }
+
 }
 </style>
 
 <template>
 
   <SearchBar></SearchBar>
-  <ul id="book-boxes" v-for="item in listItems" :key="item">
-    <li class="book-box">
+  <ul id="provider-boxes" v-for="(item, index) in listItems" :key="item">
+    <li class="provider-box">
       <div class="provider-image">
-        <img
-            class="provider-pic"
-            :src="require('@/assets/Image/doctors/' + 'doctor1.gif')"
-        />
+        <img class="provider-pic" :src="require('@/assets/Image/doctors/' + 'doctor' + (index + 1) + '.gif')" />
       </div>
       <div class="provider-info">
         <div class="name-specialization">
@@ -133,7 +138,7 @@ export default {
       </div>
 
       <div class="appointment-times">
-        <div class="first">
+        <div class="slots-row">
           <button class="slot">
             <div>
               <div>Sun</div>
@@ -164,7 +169,7 @@ export default {
               <div>appts</div>
             </div>
           </button>
-          <button class="slot" id="slot1">
+          <button disabled class="slot" id="slot1">
             <div>
               <div>Wed</div>
               <div>Nov 9</div>
@@ -184,7 +189,7 @@ export default {
               <div>appts</div>
             </div>
           </button>
-          <button class="slot" id="slot2">
+          <button disabled class="slot" id="slot2">
             <div>
               <div>Fri</div>
               <div>Nov 11</div>
@@ -194,7 +199,7 @@ export default {
               <div>appts</div>
             </div>
           </button>
-          <button class="slot" id="slot3">
+          <button disabled class="slot" id="slot3">
             <div>
               <div>Sat</div>
               <div>Nov 12</div>
@@ -205,7 +210,7 @@ export default {
             </div>
           </button>
         </div>
-        <div class="second">
+        <div class="slots-row">
           <button class="slot">
             <div>
               <div>Sun</div>
@@ -246,7 +251,7 @@ export default {
               <div>appts</div>
             </div>
           </button>
-          <button class="slot" id="slot5">
+          <button disabled class="slot" id="slot5">
             <div>
               <div>Thu</div>
               <div>Nov 17</div>
@@ -256,7 +261,7 @@ export default {
               <div>appts</div>
             </div>
           </button>
-          <button class="slot" id="slot4">
+          <button disabled class="slot" id="slot4">
             <div>
               <div>Fri</div>
               <div>Nov 18</div>
