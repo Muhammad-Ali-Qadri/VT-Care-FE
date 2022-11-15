@@ -78,7 +78,7 @@ export default {
               email: this.email,
               password: this.password,
               gender: this.gender,
-              dob: this.dateOfBirth,
+              dateOfBirth: this.dateOfBirth,
               address: this.address,
               contact: this.contact,
               experience: this.experience,
