@@ -2,8 +2,9 @@
 
 import provider from "@/services/provider";
 import SearchBar from "@/components/SearchBar.vue";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   components: { SearchBar },
   data() {
     return {
@@ -20,7 +21,7 @@ export default {
   created() {
     this.getData();
   },
-};
+});
 
 </script>
 
