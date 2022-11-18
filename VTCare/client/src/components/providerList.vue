@@ -3,20 +3,30 @@
 import moment from 'moment';
 
 import provider from "@/services/provider";
-import SearchBar from "@/components/SearchBar.vue";
-import { defineComponent } from "vue";
-import { Provider } from "@/types";
+import SearchBar from './SearchBar.vue';
+import providerSlotDetail from './ProviderSlotDetail.vue';
+import { defineComponent, ref } from "vue";
+import { Appointment, Provider } from "@/types";
 
 export default defineComponent({
-  components: { SearchBar },
+  name: "ProviderList",
+  components: {
+    "search-bar": SearchBar,
+    "slot-detail": providerSlotDetail
+  },
   data() {
     return {
+      weeksToShow: 2,
       providers: [] as Provider[],
-      weeksToShow: 2
+      selectedProvider: {} as Provider,
+      imageCounter: 1,
+      popupTrigger: ref({
+        slotClick: false
+      }),
     };
   },
   methods: {
-    makeNextSchedule(providerIndex: number, week: number){
+    makeNextSchedule(providerIndex: number, week: number) {
       let date = moment();
       let detailedSchedule: {
         day: number;
@@ -27,7 +37,7 @@ export default defineComponent({
 
       date.add((week - 1) * 7, 'days');
 
-      for(let i = 0; i < 7; i++){
+      for (let i = 0; i < 7; i++) {
         detailedSchedule.push({
           day: date.weekday(),
           dayStr: date.format("ddd"),
@@ -41,27 +51,52 @@ export default defineComponent({
       return detailedSchedule;
     },
 
-    getAvailableAppointments(providerIndex: number, date: moment.Moment){
+    getAvailableAppointments(providerIndex: number, date: moment.Moment) {
       let occupiedDuration = 0;
       let timeAllowed = 0;
       let duration = 0;
 
       this.providers[providerIndex].upcomingAppointments.forEach(appt => {
-        if(date.isSame(moment(appt.date), "day")){
+        if (date.isSame(moment(appt.date), "day")) {
           occupiedDuration += appt.duration;
         }
       });
 
       this.providers[providerIndex].availabilitySchedule.forEach(slot => {
-        if(slot.day == date.weekday()){
+        if (slot.day == date.weekday()) {
           timeAllowed += moment.duration(moment(slot.endTime, 'hh:mm:ss').diff(moment(slot.startTime, 'hh:mm:ss'))).asMinutes();
           duration = slot.slotDuration;
         }
       });
 
       return (duration > 0) ? Math.floor((timeAllowed - occupiedDuration) / duration) : -1;
-    }
+    },
 
+    clickSlot(providerIndex: number) {
+      this.selectedProvider = this.providers[providerIndex];
+      this.imageCounter = providerIndex + 1;
+      this.popupTrigger.slotClick = !this.popupTrigger.slotClick;
+
+    },
+
+    closeModal() {
+      this.popupTrigger.slotClick = !this.popupTrigger.slotClick;
+    },
+
+    async slotSelected(slot: string, duration: number, date: moment.Moment) {
+      this.closeModal();
+      this.$store.dispatch("AppointmentModule/setAppointment", {
+        providerId: this.selectedProvider.providerId,
+        providerEmail: this.selectedProvider.email,
+        providerName: this.selectedProvider.name,
+        date: date.toDate(),
+        time: slot,
+        duration: duration
+
+      } as Appointment);
+
+      this.$router.push({ name: "reviewBooking" });
+    }
   },
   async created() {
     this.providers = await provider.getProviders();
@@ -139,7 +174,7 @@ export default defineComponent({
   display: flex;
   width: 4.5em;
   height: 7em;
-  border-radius: 0.6em;
+  border-radius: 0.3em;
   cursor: pointer;
   background-color: greenyellow;
   border: none;
@@ -170,34 +205,36 @@ export default defineComponent({
 
 <template>
 
-  <SearchBar></SearchBar>
-  <ul id="provider-boxes" v-for="(item, index) in providers" :key="item">
+  <search-bar />
+    <slot-detail v-if="popupTrigger.slotClick" :provider="selectedProvider" :imageCounter="imageCounter"
+      @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
+  <ul id="provider-boxes" v-for="(provider, index) in providers" :key="provider">
     <li class="provider-box">
       <div class="provider-image">
         <img class="provider-pic" :src="require('@/assets/Image/doctors/' + 'doctor' + (index + 1) + '.gif')" />
       </div>
       <div class="provider-info">
         <div class="name-specialization">
-          <div class="provider-name">Dr. {{ item.name }}</div>
-          <div class="provider-specialization">{{ item.specialization }}</div>
+          <div class="provider-name">Dr. {{ provider.name }}</div>
+          <div class="provider-specialization">{{ provider.specialization }}</div>
         </div>
       </div>
 
       <div class="appointment-times">
         <div class="slots-row" v-for="row in weeksToShow" :key="row">
           <button class="slot" v-for="schedule in makeNextSchedule(index, row)" :key="schedule"
-          :disabled="schedule.appointments < 0">
+            @click="clickSlot(index)" :disabled="schedule.appointments < 0">
             <div>
-              <div>{{schedule.dayStr}}</div>
-              <div>{{schedule.date}}</div>
+              <div>{{ schedule.dayStr }}</div>
+              <div>{{ schedule.date }}</div>
             </div>
             <div>
-              <div v-if="schedule.appointments > 0">{{schedule.appointments}}</div>
+              <div v-if="schedule.appointments > 0">{{ schedule.appointments }}</div>
               <div v-else>No</div>
               <div>appts</div>
             </div>
           </button>
-          
+
         </div>
       </div>
     </li>

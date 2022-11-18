@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
+
 import HomeView from "../views/HomeView.vue";
 import RegisterView from "../components/RegisterForm.vue";
 import LoginView from "../components/LogInForm.vue";
-import ProviderListView from "../components/providerList.vue";
+import ProviderListView from "../components/ProviderList.vue";
+import ReviewBooking from "../components/ReviewBooking.vue";
+import { Provider } from "@/types";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -34,6 +37,11 @@ const routes: Array<RouteRecordRaw> = [
     name: "providerlist",
     component: ProviderListView,
   },
+  {
+    path: "/reviewBooking",
+    name: "reviewBooking",
+    component: ReviewBooking,
+  }
 ];
 
 const router = createRouter({
