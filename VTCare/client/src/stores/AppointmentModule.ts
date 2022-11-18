@@ -1,4 +1,3 @@
-import { Appointment } from '@/types';
 import { Module } from 'vuex';
 
 const AppointmentModule: Module<any, any> = {
@@ -18,7 +17,7 @@ const AppointmentModule: Module<any, any> = {
     },
     getters: {
         getAppointment(state){
-            return state.appointment;
+            return JSON.parse(JSON.stringify(state.appointment)); //return copy as we cannot return state
         }
     }
 }

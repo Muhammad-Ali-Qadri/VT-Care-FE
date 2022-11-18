@@ -31,7 +31,7 @@ export interface Appointment{
   providerEmail: string;
   patientName: string;
   patientEmail: string;
-  date: Date;
+  date: Date | string;
   time: string;
   url: string;
   status: string;

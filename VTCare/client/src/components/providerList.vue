@@ -89,6 +89,10 @@ export default defineComponent({
         providerId: this.selectedProvider.providerId,
         providerEmail: this.selectedProvider.email,
         providerName: this.selectedProvider.name,
+        //TODO: Change to patient once module completed.
+        patientId: this.selectedProvider.providerId,
+        patientEmail: this.selectedProvider.email,
+        patientName: this.selectedProvider.name,
         date: date.toDate(),
         time: slot,
         duration: duration
@@ -105,7 +109,7 @@ export default defineComponent({
 
 </script>
 
-<style>
+<style scoped>
 .provider-box {
   display: flex;
   flex-direction: row;
