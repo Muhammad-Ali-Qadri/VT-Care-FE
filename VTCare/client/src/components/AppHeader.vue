@@ -69,7 +69,7 @@
 }
 </style>
 <script>
-import {mapState} from "vuex";
+import router from "@/router";
 export default {
   name: "AppHeader",
   created() {
@@ -78,6 +78,7 @@ export default {
   methods: {
     logout: function() {
       this.$store.dispatch("clearStore");
+      this.$router.push('/')
     }
   }
 };
@@ -112,7 +113,7 @@ export default {
         </router-link>
         <router-link style="font-weight: bold"
             v-else
-            :to="{ name: 'home'}"
+            :to="{ name: 'profilepage'}"
         >
           {{ this.$store.state.userObj.name}}
         </router-link>

@@ -23,7 +23,7 @@
 
 <template>
   <div class="search-bar-section">
-    <form action="/about">
+    <form action="/providerList">
       <input type="text" class="search-bar" placeholder="City, Zip or Name" />
       <button type="submit" class="search-button" value="Search">
         <i class="fa-solid fa-magnifying-glass"></i>
