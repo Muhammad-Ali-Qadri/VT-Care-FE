@@ -76,7 +76,6 @@ export default defineComponent({
       this.selectedProvider = this.providers[providerIndex];
       this.imageCounter = providerIndex + 1;
       this.popupTrigger.slotClick = !this.popupTrigger.slotClick;
-
     },
 
     closeModal() {

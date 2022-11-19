@@ -4,6 +4,7 @@ import appointment from '@/services/appointment';
 import { Appointment } from '@/types';
 import moment from 'moment';
 import { defineComponent } from 'vue';
+import makeToast from './toast/makeToast';
 
 export default defineComponent({
 
@@ -21,8 +22,22 @@ export default defineComponent({
             if (this.isTOSSelected) {
                 this.appt.status = "SCHEDULED";
                 this.appt.videoAppointment = true;
-                await appointment.scheduleAppointment(this.appt); //TODO: Add to upcoming appointment in store.
-                this.$router.push({ name: "home" })
+
+                try {
+                    this.appt = await appointment.scheduleAppointment(this.appt); //TODO: Add to upcoming appointment in store.   
+
+                    if (this.appt.id < 0) {
+                        makeToast("Conflicting appointment found!", 'danger');
+                    }
+                    else {
+                        makeToast("Appointment scheduled successfully!", 'success');
+                    }
+                } catch (error) {
+                    makeToast("Error while creating appointment!", 'danger');
+                }
+                finally {
+                    this.$router.push({ name: "home" });
+                }
             }
         }
     },
