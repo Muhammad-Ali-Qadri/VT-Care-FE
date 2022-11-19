@@ -75,7 +75,10 @@ export default defineComponent({
         else {
           this.$store.dispatch("UserModule/setUserType", this.role);
           this.$store.dispatch("UserModule/setUserObj", data);
-          this.$router.push({ name: "home" });
+
+          let dest = this.$route.query.redirect as string || "home";
+
+          this.$router.push({ name: dest });
         }
       })
         .catch((reason) => {

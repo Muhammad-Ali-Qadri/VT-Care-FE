@@ -69,7 +69,7 @@ export default defineComponent({
         }
       });
 
-      return (duration > 0) ? Math.floor((timeAllowed - occupiedDuration) / duration) : -1;
+      return (duration > 0) ? Math.ceil((timeAllowed - occupiedDuration) / duration) : -1;
     },
 
     clickSlot(providerIndex: number) {
@@ -99,7 +99,16 @@ export default defineComponent({
 
       } as Appointment);
 
-      this.$router.push({ name: "reviewBooking" });
+      if (this.$store.getters["UserModule/isUserLoggedIn"]) {
+        this.$router.push({ name: "reviewBooking" });
+      }
+      else {
+        this.$router.push({
+          name: "login", query: {
+            redirect: "reviewBooking"
+          }
+        });
+      }
     }
   },
   async created() {
@@ -210,8 +219,8 @@ export default defineComponent({
 <template>
 
   <search-bar />
-    <slot-detail v-if="popupTrigger.slotClick" :provider="selectedProvider" :imageCounter="imageCounter"
-      @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
+  <slot-detail v-if="popupTrigger.slotClick" :provider="selectedProvider" :imageCounter="imageCounter"
+    @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
   <ul id="provider-boxes" v-for="(provider, index) in providers" :key="provider">
     <li class="provider-box">
       <div class="provider-image">

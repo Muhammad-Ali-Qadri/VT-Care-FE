@@ -30,21 +30,19 @@ export default defineComponent({
         constructFutureAppointments() {
             const record: Record<string, Set<string>> = {};
             (this.provider as Provider).upcomingAppointments.forEach(appt => {
-                let dateStr = moment(appt.date).format("MM/DD/YYYY");
+                let dateStr = moment(appt.date).format("DD/MM/YYYY");
 
-                if (record[dateStr]) {
-                    record[dateStr].add(moment(appt.time, 'hh:mm:ss').format("hh:mm A"));
-                }
-                else {
+                if (!record[dateStr]) {
                     record[dateStr] = new Set<string>();
                 }
+
+                record[dateStr].add(moment(appt.time, 'hh:mm:ss').format("hh:mm A"));
             });
 
             this.appointmentTimes = record;
         },
 
         nextCycle() {
-            console.log("next")
             this.date.add(14, "days");
             this.generateSlotStructure();
 
@@ -80,10 +78,10 @@ export default defineComponent({
                     let endTime = moment(slot.endTime, 'hh:mm:ss');
 
                     while (!startTime.isSame(endTime)) {
-                        let start = startTime.format("hh:mm A");
-                        let tempDate = date.format("DD/MM/YYYY");
-
-                        if (!(this.appointmentTimes[tempDate] && this.appointmentTimes[tempDate]?.has(start))) {
+                        let start = startTime.format("hh:mm A") as string;
+                        let tempDate = date.format("DD/MM/YYYY") as string;
+                        
+                        if (!(this.appointmentTimes[tempDate] != undefined && this.appointmentTimes[tempDate].has(start))) {
                             times.push({
                                 time: startTime.format("hh:mm A"),
                                 duration: slot.slotDuration
@@ -344,7 +342,7 @@ export default defineComponent({
                     </div>
                     <div style="">
                         <div class="slot-box">
-                            <div class="date-box" v-for="detail in getCycleSchedule()" :key="detail">
+                            <div class="date-box" v-for="detail in detailedSchedule" :key="detail">
                                 <div class="date-text">
                                     {{ detail.dayStr }}, {{ detail.date }}
                                     <span class="date-no-availability" v-if="detail.slotTime?.length == 0">

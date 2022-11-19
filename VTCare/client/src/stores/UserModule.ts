@@ -26,8 +26,14 @@ const UserModule: Module<any, any> = {
         logout(context) {
             context.commit("SET_USER_OBJ", null);
             context.commit("SET_USER_TYPE", null);
-        }
+        },
     },
+
+    getters: {
+        isUserLoggedIn(state) {
+            return state.userObj != null;
+        }
+    }
 }
 
 export default UserModule;
