@@ -1,13 +1,130 @@
-<script lang="ts">
+<script>
+import provider from "@/services/provider";
+
+export default {
+  data() {
+    return {
+      editEmailVal: "",
+      editEmail: false,
+
+      editDateOfBirthVal: "",
+      editDateOfBirth: false,
+
+      editContactVal: "",
+      editContact: false,
+
+      editAddressVal: "",
+      editAddress: false,
+
+      editSpecializationVal: "",
+      editSpecialization: false,
+
+      editYoeVal: "",
+      editYoe: false,
+    }
+  },
+
+  methods: {
+    edit_email: function () {
+      this.editEmail = true;
+      // var name = this.$el.querySelector("#name")
+    },
+    cancel_edit_email: function () {
+      this.editEmail = false;
+    },
+    save_email: function () {
+      if (this.editEmailVal === "") {
+        alert("Email could not be empty")
+      }else {
+        this.editEmail = false;
+        this.$store.state.userObj.email = this.editEmailVal
+      }
+    },
+
+    edit_dob: function () {
+      this.editDateOfBirth = true;
+    },
+    cancel_edit_dob: function () {
+      this.editDateOfBirth = false;
+    },
+    save_dob: function () {
+      if (this.editDateOfBirthVal === "") {
+        alert("Date of Birth could not be empty")
+      }else {
+        this.editDateOfBirth = false;
+        this.$store.state.userObj.date = this.editDateOfBirthVal
+      }
+    },
+
+    edit_contact: function () {
+      this.editContact = true;
+    },
+    cancel_edit_contact: function () {
+      this.editContact = false;
+    },
+    save_contact: function () {
+      if (this.editContactVal === "") {
+        alert("Phone number could not be empty")
+      }else {
+        this.editContact = false;
+        this.$store.state.userObj.contact = this.editContactVal
+      }
+    },
+
+    edit_specia: function () {
+      this.editSpecialization = true;
+    },
+    cancel_edit_specia: function () {
+      this.editSpecialization = false;
+    },
+    save_specia: function () {
+      if (this.editSpecializationVal === "") {
+        alert("Specialization could not be empty")
+      }else {
+        this.editSpecialization = false;
+        this.$store.state.userObj.specialization = this.editSpecializationVal
+      }
+    },
+
+    edit_yoe: function () {
+      this.editYoe = true;
+    },
+    cancel_edit_yoe: function () {
+      this.editYoe = false;
+    },
+    save_yoe: function () {
+      if (this.editYoeVal === "") {
+        alert("Year of experience could not be empty")
+      }else {
+        this.editYoe = false;
+        this.$store.state.userObj.yearsOfExperience = this.editYoeVal
+      }
+    },
+
+    edit_address: function () {
+      this.editAddress = true;
+    },
+    cancel_edit_address: function () {
+      this.editAddress = false;
+    },
+    save_address: function () {
+      if (this.editAddressVal === "") {
+        alert("Address could not be empty")
+      }else {
+        this.editAddress = false;
+        this.$store.state.userObj.address = this.editAddressVal
+      }
+    },
+
+  },
+};
 </script>
 
 <style scoped>
 .profile-sec {
   text-align: initial;
-  margin: 3em 0 10em 20em;
-  /*margin-top: 3em;*/
-  /*margin-bottom: 10em;*/
   display: flex;
+  background: #fafafa;
 }
 .user-title-1 {
   font-size: 25px;
@@ -19,78 +136,163 @@
   font-weight: bold;
   line-height: 3em;
 }
+.user-title-3 {
+  font-size: 18px;
+  line-height: 3em;
+}
 .each-div {
   border-bottom: solid 1px rgba(0, 0, 0, 0.2);
   padding: 1em 1em 2em 0;
   width: 50em;
 }
-.profile-select {
-  padding: 0 10em 2em 3em;
+.main-sec {
+  margin-left: 20em;
+  margin-top: 3em;
+  margin-bottom: 5em;
 }
-.select-text {
-  line-height: 3em;
-  font-weight: bold;
+.modify-input {
+  width: 100%;
+  border: rgba(0, 0, 0, 0.1) solid 1px;
+  padding: 1em;
+}
+.save-btn {
+  margin-top: 1.5em;
+  padding: 1em 2em;
+  background: #2c5049;
+  color: white;
   border: none;
-  background: none;
-  text-align: left;
-  border-bottom: solid 1px rgba(0, 0, 0, 0.2);
-  width: 10em;
   cursor: pointer;
-  color: #2c3e50;
-  font-size: 15px;
 }
-
 </style>
 
 <template>
   <section class="profile-sec" v-if="this.$store.state.userObj.providerId">
 
-<!--    <div class="profile-select">-->
-<!--      <router-link class="router-link-select" to="/profile">-->
-<!--        <button class="select-text">Profile</button>-->
-<!--      </router-link><br>-->
-<!--      <router-link to="/profile">-->
-<!--        <button class="select-text">Login & Security</button>-->
-<!--      </router-link><br>-->
-<!--      <router-link to="/">-->
-<!--        <button class="select-text">Insurance</button>-->
-<!--      </router-link>-->
-<!--    </div>-->
 
-    <div>
+    <div class="main-sec">
       <h1 class="user-title-1"> Profile</h1>
       <div class="each-div">
         <h3 class="user-title-2"> Name</h3>
-        <h3 class="user-content"> {{ this.$store.state.userObj.name }}</h3>
+        <h3 id="name"> {{ this.$store.state.userObj.name }}</h3>
       </div>
       <div class="each-div">
         <h3 class="user-title-2"> Gender</h3>
-        <h3 class="user-content"> {{ this.$store.state.userObj.gender }}</h3>
+        <h3 id="gender"> {{ this.$store.state.userObj.gender }}</h3>
       </div>
       <div class="each-div">
-        <h3 class="user-title-2"> Date of Birth</h3>
-        <h3 class="user-content"> {{ this.$store.state.userObj.date }}</h3>
-      </div>
-      <div class="each-div">
-        <h3 class="user-title-2"> Email</h3>
-        <h3 class="user-content"> {{ this.$store.state.userObj.email }}</h3>
-      </div>
-      <div class="each-div">
-        <h3 class="user-title-2"> Phone number</h3>
-        <h3 class="user-content"> {{ this.$store.state.userObj.contact }}</h3>
+        <h3 class="user-title-2">Date of Birth</h3>
+        <div v-if="editDateOfBirth === false">
+          <a style="float: right;text-decoration: underline;" @click="edit_dob">Edit</a>
+          <h3 id="date"> {{ this.$store.state.userObj.date }}</h3>
+        </div>
+        <div v-else>
+          <a style="float: right;text-decoration: underline;" @click="cancel_edit_dob">Cancel</a>
+          <h2 class="user-title-3">Date of Birth</h2>
+          <form @submit.prevent="save_dob">
+            <input class="modify-input"
+                v-model="editDateOfBirthVal"
+                type="date"
+            />
+            <input class="save-btn" type="submit" value="Save">
+          </form>
+        </div>
       </div>
 
       <div class="each-div">
-        <h3 class="user-title-2"> Address</h3>
-        <h3 class="user-content"> {{ this.$store.state.userObj.address }}</h3>
+        <h3 class="user-title-2"> Email Address</h3>
+        <div v-if="editEmail === false">
+          <a style="float: right;text-decoration: underline;" @click="edit_email">Edit</a>
+          <h3 id="email"> {{ this.$store.state.userObj.email }}</h3>
+        </div>
+        <div v-else>
+          <a style="float: right;text-decoration: underline;" @click="cancel_edit_email">Cancel</a>
+          <h2 class="user-title-3">Email Address</h2>
+          <form @submit.prevent="save_email()">
+            <input class="modify-input"
+                   v-model="editEmailVal"
+                   type="email"
+            />
+            <input class="save-btn" type="submit" value="Save">
+          </form>
+        </div>
+
+
       </div>
       <div class="each-div">
-        <h3 class="user-title-2"> Specialization</h3>
-        <h3 class="user-content"> {{ this.$store.state.userObj.specialization }}</h3>
+        <h3 class="user-title-2">Phone Number</h3>
+        <div v-if="editContact === false">
+          <a style="float: right;text-decoration: underline;" @click="edit_contact">Edit</a>
+          <h3 id="phone"> {{ this.$store.state.userObj.contact }}</h3>
+        </div>
+        <div v-else>
+          <a style="float: right;text-decoration: underline;" @click="cancel_edit_contact">Cancel</a>
+          <h2 class="user-title-3">Phone Number</h2>
+          <form @submit.prevent="save_contact()">
+            <input class="modify-input"
+                   v-model="editContactVal"
+                   type="text"
+            />
+            <input class="save-btn" type="submit" value="Save">
+          </form>
+        </div>
+      </div>
+
+      <div class="each-div">
+        <h3 class="user-title-2">Address</h3>
+        <div v-if="editAddress === false">
+          <a style="float: right;text-decoration: underline;" @click="edit_address">Edit</a>
+          <h3 id="address"> {{ this.$store.state.userObj.address }}</h3>
+        </div>
+        <div v-else>
+          <a style="float: right;text-decoration: underline;" @click="cancel_edit_address">Cancel</a>
+          <h2 class="user-title-3">Address</h2>
+          <form @submit.prevent="save_address()">
+            <input class="modify-input"
+                   v-model="editAddressVal"
+                   type="text"
+            />
+            <input class="save-btn" type="submit" value="Save">
+          </form>
+        </div>
       </div>
       <div class="each-div">
-        <h3 class="user-title-2"> Years of Experience</h3>
-        <h3 class="user-content"> {{ this.$store.state.userObj.yearsOfExperience }}</h3>
+        <h3 class="user-title-2">Specialization</h3>
+        <div v-if="editSpecialization === false">
+          <a style="float: right;text-decoration: underline;" @click="edit_specia">Edit</a>
+          <h3 id="specialization"> {{ this.$store.state.userObj.specialization }}</h3>
+        </div>
+        <div v-else>
+          <a style="float: right;text-decoration: underline;" @click="cancel_edit_specia">Cancel</a>
+          <h2 class="user-title-3">Specialization</h2>
+          <form @submit.prevent="save_specia()">
+            <input class="modify-input"
+                   v-model="editSpecializationVal"
+                   type="text"
+            />
+            <input class="save-btn" type="submit" value="Save">
+          </form>
+        </div>
+      </div>
+      <div class="each-div">
+        <h3 class="user-title-2">Years of Experience</h3>
+        <div v-if="editYoe === false">
+          <a style="float: right;text-decoration: underline;" @click="edit_yoe">Edit</a>
+          <h3 id="yoe"> {{ this.$store.state.userObj.yearsOfExperience }}</h3>
+        </div>
+        <div v-else>
+          <a style="float: right;text-decoration: underline;" @click="cancel_edit_yoe">Cancel</a>
+          <h2 class="user-title-3">Years of Experience</h2>
+          <form @submit.prevent="save_yoe()">
+            <input class="modify-input"
+                   v-model="editYoeVal"
+                   type="number"
+                   min="0"
+                   max="40"
+            />
+            <input class="save-btn" type="submit" value="Save">
+          </form>
+        </div>
+
       </div>
     </div>
   </section>
