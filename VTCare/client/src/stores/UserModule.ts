@@ -1,4 +1,5 @@
 import provider from "@/services/provider";
+import patient from "@/services/patient";
 import { Module } from 'vuex';
 
 const UserModule: Module<any, any> = {
@@ -16,9 +17,18 @@ const UserModule: Module<any, any> = {
         }
     },
     actions: {
-        async setUserObj(context, user) { // TODO: call patient if user type is patient
-            const userdata = await provider.getProvider(user);
-            context.commit("SET_USER_OBJ", userdata);
+        async setUserObj(context, user) {
+            // TODO: call patient if user type is patient
+            if(context.state.userType==='Patient') {
+                const userdata = await patient.getPatient(user);
+                context.commit("SET_USER_OBJ", userdata);
+            }
+            else {
+                const userdata = await provider.getProvider(user);
+                context.commit("SET_USER_OBJ", userdata);
+            }
+
+
         },
         setUserType(context, usertype) {
             context.commit("SET_USER_TYPE", usertype);
