@@ -114,7 +114,7 @@ export default defineComponent({
             :to="{ name: 'register' }">
             register/login
           </router-link>
-          <router-link style="font-weight: bold" v-else :to="{ name: 'home' }">
+          <router-link style="font-weight: bold" v-else :to="{ name: 'profilepage' }">
             {{ $store.state.UserModule.userObj.name }}
           </router-link>
         </h1>
