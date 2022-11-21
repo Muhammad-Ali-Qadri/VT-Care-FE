@@ -42,6 +42,12 @@ const UserModule: Module<any, any> = {
     getters: {
         isUserLoggedIn(state) {
             return state.userObj != null;
+        },
+        getUserType(state) {
+            return state.userType;
+        },
+        getUser(state){
+            return JSON.parse(JSON.stringify(state.userObj)); //return copy as we cannot return state
         }
     }
 }
