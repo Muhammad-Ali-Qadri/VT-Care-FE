@@ -40,7 +40,6 @@ export default defineComponent({
       let obj = this.buildsearchParams();
       let fullpath = "providerlist" + obj;
       if(obj != "?") {
-        console.log("somehow entered.")
         this.$router.push(fullpath);
       }
       else {

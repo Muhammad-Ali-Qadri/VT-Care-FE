@@ -1,11 +1,19 @@
 <script lang="ts">
 
+import moment from 'moment';
+
 import provider from "@/services/provider";
-import SearchBar from "@/components/SearchBar.vue";
-import { defineComponent } from "vue";
+import SearchBar from './SearchBar.vue';
+import providerSlotDetail from './ProviderSlotDetail.vue';
+import { defineComponent, ref } from "vue";
+import { Appointment, Provider } from "@/types";
 
 export default defineComponent({
-  components: { SearchBar },
+  name: "ProviderList",
+  components: {
+    "search-bar": SearchBar,
+    "slot-detail": providerSlotDetail
+  },
   data() {
     return {
       weeksToShow: 2,
@@ -100,16 +108,27 @@ export default defineComponent({
           }
         });
       }
+    },
+    checkIfParamsExist(){
+      return this.$route.query.startDate === null &&
+          this.$route.query.gender === null && this.$route.query.endDate === null && this.$route.query.name === null &&
+          this.$route.query.location === null;
     }
   },
   async created() {
-    this.providers = await provider.getProviders();
+    if(this.checkIfParamsExist() ) {
+      this.providers = await provider.getProviders();
+    }
+    else{
+      this.providers = await provider.getProviders(); // note here we have params, but will need to change to match call.
+      return;
+    }
   },
 });
 
 </script>
 
-<style>
+<style scoped>
 .provider-box {
   display: flex;
   flex-direction: row;
@@ -178,7 +197,7 @@ export default defineComponent({
   display: flex;
   width: 4.5em;
   height: 7em;
-  border-radius: 0.6em;
+  border-radius: 0.3em;
   cursor: pointer;
   background-color: greenyellow;
   border: none;
@@ -211,7 +230,7 @@ export default defineComponent({
 
   <search-bar />
   <slot-detail v-if="popupTrigger.slotClick" :provider="selectedProvider" :imageCounter="imageCounter"
-    @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
+               @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
   <ul id="provider-boxes" v-for="(provider, index) in providers" :key="provider">
     <li class="provider-box">
       <div class="provider-image">
@@ -219,155 +238,26 @@ export default defineComponent({
       </div>
       <div class="provider-info">
         <div class="name-specialization">
-          <div class="provider-name">{{ item.name }}</div>
-          <div class="provider-specialization">{{ item.specialization }}</div>
+          <div class="provider-name">Dr. {{ provider.name }}</div>
+          <div class="provider-specialization">{{ provider.specialization }}</div>
         </div>
       </div>
 
       <div class="appointment-times">
-        <div class="slots-row">
-          <button class="slot">
+        <div class="slots-row" v-for="row in weeksToShow" :key="row">
+          <button class="slot" v-for="schedule in makeNextSchedule(index, row)" :key="schedule"
+                  @click="clickSlot(index)" :disabled="schedule.appointments < 0">
             <div>
-              <div>Sun</div>
-              <div>Nov 6</div>
+              <div>{{ schedule.dayStr }}</div>
+              <div>{{ schedule.date }}</div>
             </div>
             <div>
-              <div>1</div>
+              <div v-if="schedule.appointments > 0">{{ schedule.appointments }}</div>
+              <div v-else>No</div>
               <div>appts</div>
             </div>
           </button>
-          <button class="slot">
-            <div>
-              <div>Mon</div>
-              <div>Nov 7</div>
-            </div>
-            <div>
-              <div>5</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button class="slot">
-            <div>
-              <div>Tue</div>
-              <div>Nov 8</div>
-            </div>
-            <div>
-              <div>No</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button disabled class="slot" id="slot1">
-            <div>
-              <div>Wed</div>
-              <div>Nov 9</div>
-            </div>
-            <div>
-              <div>20</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button class="slot">
-            <div>
-              <div>Thu</div>
-              <div>Nov 10</div>
-            </div>
-            <div>
-              <div>25</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button disabled class="slot" id="slot2">
-            <div>
-              <div>Fri</div>
-              <div>Nov 11</div>
-            </div>
-            <div>
-              <div>27</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button disabled class="slot" id="slot3">
-            <div>
-              <div>Sat</div>
-              <div>Nov 12</div>
-            </div>
-            <div>
-              <div>21</div>
-              <div>appts</div>
-            </div>
-          </button>
-        </div>
-        <div class="slots-row">
-          <button class="slot">
-            <div>
-              <div>Sun</div>
-              <div>Nov 13</div>
-            </div>
-            <div>
-              <div>20</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button class="slot">
-            <div>
-              <div>Mon</div>
-              <div>Nov 14</div>
-            </div>
-            <div>
-              <div>25</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button class="slot">
-            <div>
-              <div>Tue</div>
-              <div>Nov 15</div>
-            </div>
-            <div>
-              <div>25</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button class="slot">
-            <div>
-              <div>Wed</div>
-              <div>Nov 16</div>
-            </div>
-            <div>
-              <div>21</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button disabled class="slot" id="slot5">
-            <div>
-              <div>Thu</div>
-              <div>Nov 17</div>
-            </div>
-            <div>
-              <div>21</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button disabled class="slot" id="slot4">
-            <div>
-              <div>Fri</div>
-              <div>Nov 18</div>
-            </div>
-            <div>
-              <div>21</div>
-              <div>appts</div>
-            </div>
-          </button>
-          <button class="slot">
-            <div>
-              <div>Sat</div>
-              <div>Nov 19</div>
-            </div>
-            <div>
-              <div>21</div>
-              <div>appts</div>
-            </div>
-          </button>
+
         </div>
       </div>
     </li>
