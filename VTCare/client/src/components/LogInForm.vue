@@ -1,8 +1,9 @@
-<script>
+<script lang="ts">
 import provider from "@/services/provider";
 import login from "@/services/login";
+import { defineComponent } from "vue";
 
-export default {
+export default defineComponent({
   data() {
     return {
       name: "",
@@ -64,34 +65,36 @@ export default {
       let temp = this.role === "Provider";
 
       login.loginRequest({
-          email: this.email,
-          password: this.password,
-          isProviderLogin: temp
-        }).then( (data) => {
-          console.log("Data: " , data);
-          if(data === 0){
-            this.$router.push({name: "login"});
-          }
-          else{
-            this.$store.dispatch("setUserType", this.role);
-            this.$store.dispatch("setUserObj", data);
-            this.$router.push({name: "home"});
-          }
+        email: this.email,
+        password: this.password,
+        isProviderLogin: temp
+      }).then((data) => {
+        if (data === 0) {
+          this.$router.push({ name: "login" });
+        }
+        else {
+          this.$store.dispatch("UserModule/setUserType", this.role);
+          this.$store.dispatch("UserModule/setUserObj", data);
+
+          let dest = this.$route.query.redirect as string || "home";
+
+          this.$router.push({ name: dest });
+        }
       })
-      .catch( (reason) => {
-        this.checkoutStatus = "SERVER_ERROR";
-        console.log("Error placing order", reason);
-      });
+        .catch((reason) => {
+          console.log("Error placing order", reason);
+        });
 
     },
   },
-};
+});
 </script>
 
 <style scoped>
 .log-sec {
   background-color: #2c5049;
 }
+
 form {
   margin-top: 200px;
   padding: 10px;
@@ -107,9 +110,11 @@ input {
   padding: 6px 8px;
   margin: 4px;
 }
+
 .spe-input {
   width: 400px;
 }
+
 .err-input {
   border-color: red;
 }
@@ -131,6 +136,7 @@ span {
   border-radius: 5px;
   width: 400px;
 }
+
 .error-msg {
   color: red;
   font-size: 10px;
@@ -143,24 +149,16 @@ span {
       <div class="info-sec">
         <!-- Email address -->
         <span>Email</span><br />
-        <input
-          v-model="email"
-          type="email"
-          placeholder="Enter your email"
-          v-bind:class="isValidEmail ? 'spe-input' : 'spe-input err-input'"
-        /><br />
+        <input v-model="email" type="email" placeholder="Enter your email"
+          v-bind:class="isValidEmail ? 'spe-input' : 'spe-input err-input'" /><br />
         <h1 class="error-msg" v-if="!isValidEmail">Email could not be empty</h1>
       </div>
 
       <div class="info-sec">
         <!-- Password -->
         <span>Password</span><br />
-        <input
-          v-bind:class="isValidPassword ? 'spe-input' : 'spe-input err-input'"
-          v-model="password"
-          type="password"
-          class="spe-input"
-        /><br />
+        <input v-bind:class="isValidPassword ? 'spe-input' : 'spe-input err-input'" v-model="password" type="password"
+          class="spe-input" /><br />
         <h1 class="error-msg" v-if="!isValidPassword">
           Password could not be empty
         </h1>
@@ -176,7 +174,7 @@ span {
         <h1 class="error-msg" v-if="!isValidRole">Please select a role</h1>
       </div>
 
-      <input class="submit" type="submit" value="login" @click="login_user"/>
+      <input class="submit" type="submit" value="login" @click="login_user" />
     </form>
     <br />
     <div style="height: 300px"></div>

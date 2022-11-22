@@ -1,5 +1,7 @@
 <script>
 import provider from "@/services/provider";
+import { defineComponent } from "vue";
+import makeToast from './toast/makeToast';
 
 export default {
   data() {
@@ -32,16 +34,15 @@ export default {
   methods: {
     submitForm: function () {
       if (
-          this.email === "" ||
-          this.password === "" ||
-          this.contact === "" ||
-          this.address === "" ||
-          this.name === "" ||
-          this.dateOfBirth === "" ||
-          this.gender === "" ||
-          this.role === ""
-      )
-      {
+        this.email === "" ||
+        this.password === "" ||
+        this.contact === "" ||
+        this.address === "" ||
+        this.name === "" ||
+        this.dateOfBirth === "" ||
+        this.gender === "" ||
+        this.role === ""
+      ) {
         this.isValidName = this.name !== "";
         this.isValidDate = this.dateOfBirth !== "";
         this.isValidEmail = this.email !== "";
@@ -53,19 +54,17 @@ export default {
         this.isValidExp = this.experience !== "";
         this.isValidSpe = this.specialization !== "";
       }
-      else
-      {
+      else {
         this.isValidRole = true;
 
         // TODO: Patient register
-        if (this.role === "Patient"){
-          this.$router.push({ name:"about" })
+        if (this.role === "Patient") {
+          this.$router.push({ name: "about" })
         }
 
         // Provider register
-        if (this.role === "Provider"){
-          if (this.experience === "" || this.specialization === "")
-          {
+        if (this.role === "Provider") {
+          if (this.experience === "" || this.specialization === "") {
             this.isValidExp = this.experience !== "";
             this.isValidSpe = this.specialization !== "";
           }
@@ -78,13 +77,15 @@ export default {
               email: this.email,
               password: this.password,
               gender: this.gender,
-              dob: this.dateOfBirth,
+              dateOfBirth: this.dateOfBirth,
               address: this.address,
               contact: this.contact,
               experience: this.experience,
               specialization: this.specialization,
             });
-            this.$router.push({ name: "login" })
+
+            makeToast("Provider registered successfully!", 'success');
+            this.$router.push({ name: "login" });
           }
         }
       }
@@ -108,9 +109,11 @@ input {
   padding: 6px 8px;
   margin: 4px;
 }
+
 .spe-input {
   width: 400px;
 }
+
 .err-input {
   border-color: red;
 }
@@ -146,24 +149,18 @@ span {
       <div class="info-sec">
         <div><span>Full Name</span><br /></div>
         <div>
-          <input
-            v-bind:class="isValidName ? 'spe-input' : 'spe-input err-input'"
-            v-model="name"
-            type="text"
-            placeholder="Enter your name"
-        /><br />
-          <h1 class="error-msg" v-if="!isValidName">Name could not be empty</h1></div>
+          <input v-bind:class="isValidName ? 'spe-input' : 'spe-input err-input'" v-model="name" type="text"
+            placeholder="Enter your name" /><br />
+          <h1 class="error-msg" v-if="!isValidName">Name could not be empty</h1>
+        </div>
 
       </div>
 
       <!-- Date of Birth -->
       <div class="info-sec">
         <span>Date of birth</span><br />
-        <input
-            v-bind:class="isValidDate ? 'spe-input' : 'spe-input err-input'"
-            v-model="dateOfBirth"
-            type="date"
-        /><br />
+        <input v-bind:class="isValidDate ? 'spe-input' : 'spe-input err-input'" v-model="dateOfBirth"
+          type="date" /><br />
         <h1 class="error-msg" v-if="!isValidDate">Please choose a date</h1>
       </div>
 
@@ -180,24 +177,16 @@ span {
       <!-- Email address -->
       <div class="info-sec">
         <span>Email</span><br />
-        <input
-            v-model="email"
-            type="email"
-            placeholder="Enter your email"
-            v-bind:class="isValidEmail ? 'spe-input' : 'spe-input err-input'"
-        /><br />
+        <input v-model="email" type="email" placeholder="Enter your email"
+          v-bind:class="isValidEmail ? 'spe-input' : 'spe-input err-input'" /><br />
         <h1 class="error-msg" v-if="!isValidEmail">Email could not be empty</h1>
       </div>
 
       <!-- Password -->
       <div class="info-sec">
         <span>Password</span><br />
-        <input
-            v-bind:class="isValidPassword ? 'spe-input' : 'spe-input err-input'"
-            v-model="password"
-            type="password"
-            class="spe-input"
-        /><br />
+        <input v-bind:class="isValidPassword ? 'spe-input' : 'spe-input err-input'" v-model="password" type="password"
+          class="spe-input" /><br />
         <h1 class="error-msg" v-if="!isValidPassword">
           Password could not be empty
         </h1>
@@ -206,24 +195,16 @@ span {
       <!-- Address -->
       <div class="info-sec">
         <span>Address</span><br />
-        <input
-            v-model="address"
-            type="text"
-            placeholder="Enter your address"
-            v-bind:class="isValidAddress ? 'spe-input' : 'spe-input err-input'"
-        /><br />
+        <input v-model="address" type="text" placeholder="Enter your address"
+          v-bind:class="isValidAddress ? 'spe-input' : 'spe-input err-input'" /><br />
         <h1 class="error-msg" v-if="!isValidAddress">Address could not be empty</h1>
       </div>
 
       <!-- Contact -->
       <div class="info-sec">
         <span>Phone Number</span><br />
-        <input
-            v-model="contact"
-            type="text"
-            placeholder="xxx-xxx-xxxx"
-            v-bind:class="isValidContact ? 'spe-input' : 'spe-input err-input'"
-        /><br />
+        <input v-model="contact" type="text" placeholder="xxx-xxx-xxxx"
+          v-bind:class="isValidContact ? 'spe-input' : 'spe-input err-input'" /><br />
         <h1 class="error-msg" v-if="!isValidContact">Phone number could not be empty</h1>
       </div>
 
@@ -242,23 +223,16 @@ span {
         <!-- Year of Experience -->
         <div class="info-sec">
           <span>Years of Experience</span><br />
-          <input
-              v-model="experience"
-              type="text"
-              placeholder="Enter the number of years "
-              v-bind:class="isValidExp ? 'spe-input' : 'spe-input err-input'"
-          /><br />
+          <input v-model="experience" type="text" placeholder="Enter the number of years "
+            v-bind:class="isValidExp ? 'spe-input' : 'spe-input err-input'" /><br />
           <h1 class="error-msg" v-if="!isValidExp">Years of Experience could not be empty</h1>
         </div>
 
         <!-- Specialization -->
         <div class="info-sec">
           <span>Specialization</span><br />
-          <input
-              v-model="specialization"
-              type="text"
-              v-bind:class="isValidSpe ? 'spe-input' : 'spe-input err-input'"
-          /><br />
+          <input v-model="specialization" type="text"
+            v-bind:class="isValidSpe ? 'spe-input' : 'spe-input err-input'" /><br />
           <h1 class="error-msg" v-if="!isValidSpe">Specialization could not be empty</h1>
         </div>
       </div>

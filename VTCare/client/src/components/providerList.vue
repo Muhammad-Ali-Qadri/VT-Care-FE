@@ -8,23 +8,102 @@ export default defineComponent({
   components: { SearchBar },
   data() {
     return {
-      listItems: [],
+      weeksToShow: 2,
+      providers: [] as Provider[],
+      selectedProvider: {} as Provider,
+      imageCounter: 1,
+      popupTrigger: ref({
+        slotClick: false
+      }),
     };
   },
   methods: {
-    async getData() {
-      if(this.$route.query.search_query == null) {
-        const res = await provider.getProviders();
-        this.listItems = res;
+    makeNextSchedule(providerIndex: number, week: number) {
+      let date = moment();
+      let detailedSchedule: {
+        day: number;
+        dayStr: string;
+        date: string;
+        appointments: number;
+      }[] = [];
+
+      date.add((week - 1) * 7, 'days');
+
+      for (let i = 0; i < 7; i++) {
+        detailedSchedule.push({
+          day: date.weekday(),
+          dayStr: date.format("ddd"),
+          date: date.format("MMM D"),
+          appointments: this.getAvailableAppointments(providerIndex, date)
+        });
+
+        date.add(1, 'days');
       }
-      else{
-        //const res = await provider.getProvider(this.$route.query.search_query ); // change this to call API akshay makes
-        return;
-      }
+
+      return detailedSchedule;
     },
+
+    getAvailableAppointments(providerIndex: number, date: moment.Moment) {
+      let occupiedDuration = 0;
+      let timeAllowed = 0;
+      let duration = 0;
+
+      this.providers[providerIndex].upcomingAppointments.forEach(appt => {
+        if (date.isSame(moment(appt.date), "day")) {
+          occupiedDuration += appt.duration;
+        }
+      });
+
+      this.providers[providerIndex].availabilitySchedule.forEach(slot => {
+        if (slot.day == date.weekday()) {
+          timeAllowed += moment.duration(moment(slot.endTime, 'hh:mm:ss').diff(moment(slot.startTime, 'hh:mm:ss'))).asMinutes();
+          duration = slot.slotDuration;
+        }
+      });
+
+      return (duration > 0) ? Math.ceil((timeAllowed - occupiedDuration) / duration) : -1;
+    },
+
+    clickSlot(providerIndex: number) {
+      this.selectedProvider = this.providers[providerIndex];
+      this.imageCounter = providerIndex + 1;
+      this.popupTrigger.slotClick = !this.popupTrigger.slotClick;
+    },
+
+    closeModal() {
+      this.popupTrigger.slotClick = !this.popupTrigger.slotClick;
+    },
+
+    async slotSelected(slot: string, duration: number, date: moment.Moment) {
+      this.closeModal();
+      this.$store.dispatch("AppointmentModule/setAppointment", {
+        providerId: this.selectedProvider.providerId,
+        providerEmail: this.selectedProvider.email,
+        providerName: this.selectedProvider.name,
+        //TODO: Change to patient once module completed.
+        patientId: this.selectedProvider.providerId,
+        patientEmail: this.selectedProvider.email,
+        patientName: this.selectedProvider.name,
+        date: date.toDate(),
+        time: slot,
+        duration: duration
+
+      } as Appointment);
+
+      if (this.$store.getters["UserModule/isUserLoggedIn"]) {
+        this.$router.push({ name: "reviewBooking" });
+      }
+      else {
+        this.$router.push({
+          name: "login", query: {
+            redirect: "reviewBooking"
+          }
+        });
+      }
+    }
   },
-  created() {
-    this.getData();
+  async created() {
+    this.providers = await provider.getProviders();
   },
 });
 
@@ -130,8 +209,10 @@ export default defineComponent({
 
 <template>
 
-  <search-bar></search-bar>
-  <ul id="provider-boxes" v-for="(item, index) in listItems" :key="item">
+  <search-bar />
+  <slot-detail v-if="popupTrigger.slotClick" :provider="selectedProvider" :imageCounter="imageCounter"
+    @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
+  <ul id="provider-boxes" v-for="(provider, index) in providers" :key="provider">
     <li class="provider-box">
       <div class="provider-image">
         <img class="provider-pic" :src="require('@/assets/Image/doctors/' + 'doctor' + (index + 1) + '.gif')" />
