@@ -110,8 +110,7 @@ export default defineComponent({
       }
     },
     checkIfParamsExist(){
-      return this.$route.query.startDate === null &&
-          this.$route.query.gender === null && this.$route.query.endDate === null && this.$route.query.name === null &&
+      return this.$route.query.gender === null && this.$route.query.specialization === null && this.$route.query.name === null &&
           this.$route.query.location === null;
     }
   },

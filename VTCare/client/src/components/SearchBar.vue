@@ -4,32 +4,29 @@ import { defineComponent } from "vue";
 export default defineComponent({
   data() {
     return {
-      searchbarval: "",
+      searchBarVal: "",
       genders: [ "Male" , "Female" , "Other"],
       startDate: "",
       endDate: "",
-      Location: "",
-      gendersel: "Preferred Gender",
-      today: ""
+      location: "",
+      gender: "Preferred Gender",
+      specialization: ""
     }
   },
 
   methods: {
-    buildsearchParams(){
+    buildSearchParams(){
       let ans = "?";
-      if(this.searchbarval != "")
-        ans += "name=" + this.searchbarval +"&";
-      if(this.startDate != this.today || this.endDate != this.today){
-        ans += "startDate=" + this.startDate + "&";
+      if(this.searchBarVal != "")
+        ans += "name=" + this.searchBarVal +"&";
+      if(this.specialization != "" ){
+        ans += "specialization=" + this.specialization + "&";
       }
-      if(this.endDate != this.today) {
-        ans += "endDate=" + this.endDate + "&";
+      if(this.gender != "Preferred Gender") {
+        ans+= "gender=" + this.gender + "&";
       }
-      if(this.gendersel != "Preferred Gender") {
-        ans+= "gender=" + this.gendersel + "&";
-      }
-      if(this.Location != "") {
-        ans += "location=" + this.Location + "&";
+      if(this.location != "") {
+        ans += "location=" + this.location + "&";
       }
       if(ans !== "?")
         ans = ans.substring(0, ans.length-1);
@@ -37,7 +34,7 @@ export default defineComponent({
     },
 
     sendSearchbar() {
-      let obj = this.buildsearchParams();
+      let obj = this.buildSearchParams();
       let fullpath = "providerlist" + obj;
       if(obj != "?") {
         this.$router.push(fullpath);
@@ -51,13 +48,6 @@ export default defineComponent({
 
 
   created() {
-    let date = new Date();
-    let dateString = new Date(date.getTime() - (date.getTimezoneOffset() * 60000 ))
-        .toISOString()
-        .split("T")[0];
-    this.startDate = dateString;
-    this.endDate = dateString;
-    this.today = dateString;
     return;
   }
 
@@ -127,7 +117,7 @@ export default defineComponent({
           <text class="location-icon">
             <i class="fa-solid fa-location-dot"></i>&nbsp;
           </text>
-          <input name="Location" id="Location" type="text" v-model="Location" placeholder="Desired Location" autocomplete="off"
+          <input name="location" id="location" type="text" v-model="location" placeholder="Desired location" autocomplete="off"
                  class="search-bar">
         </div>
 
@@ -138,7 +128,7 @@ export default defineComponent({
           <label for="gender">
             Preferred gender
           </label>-->
-          <select id="gender" v-model="gendersel" class="search-bar">
+          <select id="gender" v-model="gender" class="search-bar">
             <option disabled>Preferred Gender</option>
             <option v-for="item in genders" :value="item" :key="item">
               {{item}}
@@ -147,28 +137,12 @@ export default defineComponent({
         </div>
         <div class="divider"></div>
         <div>
-          <!-- start date goes here -->
-          <span>Start Date</span> &nbsp;
-          <input
-              v-model="startDate"
-              type="date"
-              class="search-bar"
-          /><br />
-        </div>
-        <div class="divider"></div>
-        <!-- start date goes here -->
-        <div class="search-bar">
-          <span>End Date</span> &nbsp;
-          <input
-              v-model="endDate"
-              type="date"
-              class="search-bar"
-          /><br />
-        </div>
+          <input name="specialization" id="specialization" type="text" v-model="specialization" placeholder="specialization" autocomplete="off"
+                              class="search-bar"></div>
         <div class="divider">
         </div>
         <div class="search-bar">
-          <input type="text" v-model="searchbarval"  class="search-bar" placeholder="Name" autocomplete="off" />
+          <input type="text" v-model="searchBarVal"  class="search-bar" placeholder="Name" autocomplete="off" />
         </div>
       </div>
       <div>
