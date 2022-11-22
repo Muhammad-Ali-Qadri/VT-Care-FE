@@ -13,9 +13,14 @@ export default defineComponent({
   },
   methods: {
     async getData() {
-      const res = await provider.getProviders();
-      console.log(res);
-      this.listItems = res;
+      if(this.$route.query.search_query == null) {
+        const res = await provider.getProviders();
+        this.listItems = res;
+      }
+      else{
+        //const res = await provider.getProvider(this.$route.query.search_query ); // change this to call API akshay makes
+        return;
+      }
     },
   },
   created() {
@@ -125,7 +130,7 @@ export default defineComponent({
 
 <template>
 
-  <SearchBar></SearchBar>
+  <search-bar></search-bar>
   <ul id="provider-boxes" v-for="(item, index) in listItems" :key="item">
     <li class="provider-box">
       <div class="provider-image">
