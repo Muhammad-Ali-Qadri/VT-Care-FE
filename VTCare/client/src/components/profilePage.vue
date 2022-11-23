@@ -1,4 +1,5 @@
 <script>
+import NotesPopup from './NotesPopup';
 
 export default {
   data() {
@@ -23,7 +24,12 @@ export default {
 
       editYoeVal: "",
       editYoe: false,
+
+      popupTrigger: false,
     }
+  },
+  components: {
+    "notes-popup": NotesPopup
   },
 
   methods: {
@@ -117,6 +123,14 @@ export default {
         this.user.address = this.editAddressVal
       }
     },
+
+    enablePopup: function() {
+      this.popupTrigger = !this.popupTrigger;
+    },
+
+    closeNotes: function() {
+      this.popupTrigger = !this.popupTrigger;
+    }
 
   },
 };
@@ -296,6 +310,13 @@ export default {
 
       </div>
     </div>
+    <div>
+      <button @click="enablePopup">
+        press me!
+      </button>
+    </div>
+    <notes-popup v-if="popupTrigger"
+                 @closePopup="closeNotes"></notes-popup>
   </section>
   <section class="profile-sec" v-else>
     this is patient profile

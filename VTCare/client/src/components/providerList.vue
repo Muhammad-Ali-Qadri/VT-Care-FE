@@ -226,8 +226,7 @@ export default defineComponent({
 </style>
 
 <template>
-
-  <search-bar />
+  <search-bar></search-bar>
   <slot-detail v-if="popupTrigger.slotClick" :provider="selectedProvider" :imageCounter="imageCounter"
                @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
   <ul id="provider-boxes" v-for="(provider, index) in providers" :key="provider">
