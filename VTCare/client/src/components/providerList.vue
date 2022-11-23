@@ -110,18 +110,59 @@ export default defineComponent({
       }
     },
     checkIfParamsExist(){
-      return this.$route.query.gender === null && this.$route.query.specialization === null && this.$route.query.name === null &&
-          this.$route.query.location === null;
-    }
+      return this.$route.query.gender == null && this.$route.query.specialization == null && this.$route.query.name == null &&
+          this.$route.query.location == null;
+    },
+    async reload(){
+        if(this.checkIfParamsExist() ) {
+          this.providers = await provider.getProviders();
+        }
+        else{
+          let genderSelected = undefined, specialization = undefined,
+              nameQuery = undefined, location = undefined;
+
+          if(this.$route.query.gender !== null)
+            genderSelected = String(this.$route.query.gender);
+          if(this.$route.query.specialization !== null)
+            specialization = String(this.$route.query.specialization);
+          if(this.$route.query.name !== null)
+            nameQuery = String(this.$route.query.name);
+          if(this.$route.query.location !== null)
+            location = String(this.$route.query.location);
+
+
+          this.providers = await provider.getParameterizedProvider(genderSelected, location, nameQuery, specialization); // note here we have params, but will need to change to match call.
+          return;
+        }
+    },
   },
   async created() {
     if(this.checkIfParamsExist() ) {
       this.providers = await provider.getProviders();
     }
     else{
-      this.providers = await provider.getProviders(); // note here we have params, but will need to change to match call.
+      let genderSelected = undefined, specialization = undefined,
+          nameQuery = undefined, location = undefined;
+
+      if(this.$route.query.gender !== null)
+        genderSelected = String(this.$route.query.gender);
+      if(this.$route.query.specialization !== null)
+        specialization = String(this.$route.query.specialization);
+      if(this.$route.query.name !== null)
+        nameQuery = String(this.$route.query.name);
+      if(this.$route.query.location !== null)
+        location = String(this.$route.query.location);
+
+
+      this.providers = await provider.getParameterizedProvider(genderSelected, location, nameQuery, specialization); // note here we have params, but will need to change to match call.
       return;
     }
+  },
+  watch: {
+    "$route.query"(val) {
+      // call the method which loads your initial state
+      this.reload();
+    },
   },
 });
 
@@ -226,8 +267,7 @@ export default defineComponent({
 </style>
 
 <template>
-
-  <search-bar />
+  <search-bar></search-bar>
   <slot-detail v-if="popupTrigger.slotClick" :provider="selectedProvider" :imageCounter="imageCounter"
                @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
   <ul id="provider-boxes" v-for="(provider, index) in providers" :key="provider">
