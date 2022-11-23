@@ -22,6 +22,17 @@ export interface Provider{
   availabilitySchedule: AppointmentSlot[];
 }
 
+export interface Patient{
+  name: string;
+  email: string;
+  gender: string;
+  address: string;
+  contact: string;
+  dateOfBirth: string;
+  patientId: number;
+  upcomingAppointments: Appointment[];
+}
+
 export interface Appointment{
   id: number;
   providerId: number;
