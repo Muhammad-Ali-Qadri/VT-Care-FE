@@ -1,6 +1,6 @@
-<script>
-
-export default {
+<script lang="ts">
+import { defineComponent, ref } from "vue";
+export default defineComponent({
   data() {
     return {
 
@@ -119,7 +119,7 @@ export default {
     },
 
   },
-};
+});
 </script>
 
 <style scoped>

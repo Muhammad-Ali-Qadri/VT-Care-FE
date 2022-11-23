@@ -1,13 +1,20 @@
-<script>
+<script lang="ts">
 
 import ProviderProfileItem from "@/components/providerProfileItem.vue";
 import PatientProfileItem from "@/components/patientProfileItem.vue";
-export default {
+import { defineComponent, ref } from "vue";
+export default defineComponent({
+  data() {
+    return {
+      userType:this.$store.getters['UserModule/getUserType'],
+    }
+  },
+
   components: {
     ProviderProfileItem,
     PatientProfileItem,
   }
-}
+})
 
 
 </script>
@@ -16,7 +23,7 @@ export default {
 </style>
 
 <template>
-  <section v-if="this.$store.getters['UserModule/getUserType'] === 'Provider'">
+  <section v-if="userType === 'Provider'">
     <ProviderProfileItem></ProviderProfileItem>
   </section>
   <section v-else>

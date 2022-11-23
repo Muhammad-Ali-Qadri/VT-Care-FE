@@ -29,8 +29,26 @@ export interface Patient{
   address: string;
   contact: string;
   dateOfBirth: string;
-  patientId: number;
+  id: number;
+  designation: string;
+  Insurance: Insurance;
   upcomingAppointments: Appointment[];
+  patientVisitHistory: PatientVisitHistory[];
+}
+
+ //TODO remember to remove this from type once finished register form
+export interface RegisterPatient{
+  name: string;
+  email: string;
+  gender: string;
+  address: string;
+  contact: string;
+  dob: string;
+  patientId: number;
+  designation: string;
+  employer: string;
+  insurancePolicyNo: number;
+  insuranceNetwId: number;
 }
 
 export interface Appointment{
@@ -48,6 +66,23 @@ export interface Appointment{
   status: string;
   videoAppointment: boolean;
 }
+
+export interface PatientVisitHistory{
+  id: number;
+  patientId: number;
+  appDate: string;
+  providerName: string;
+  diagnosis: string;
+  prescription: string;
+  notes: string;
+}
+
+export interface Insurance{
+  id: number;
+  policeNo: number;
+  networkId: number;
+}
+
 
 export interface AppointmentSlot{
   appointmentSlotId: number;

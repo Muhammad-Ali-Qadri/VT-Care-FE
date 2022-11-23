@@ -8,21 +8,6 @@ export default {
         return await temp.json();
     },
 
-    getPatients(): Promise<Patient[]>{
-        const url = apiUrl + "/patients";
-        console.log("GET from " + url);
-        return fetch(url)
-            .then((response) => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error("Network response was not ok.");
-            })
-            .catch((reason) => {
-                console.log("Error fetching category data", reason);
-            });
-    },
-
     registerPatient(patientInfo: Patient): Promise<Patient> {
         const url = apiUrl + "/patients";
         return fetch(url,{
