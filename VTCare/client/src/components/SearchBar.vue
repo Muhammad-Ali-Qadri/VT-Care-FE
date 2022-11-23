@@ -48,8 +48,16 @@ export default defineComponent({
 
 
   created() {
+    if(typeof(this.$route.query.gender) !== 'undefined')
+      this.gender = String(this.$route.query.gender);
+    if(typeof(this.$route.query.specialization) !== 'undefined')
+      this.specialization = String(this.$route.query.specialization);
+    if(typeof(this.$route.query.name) !== 'undefined' )
+      this.searchBarVal = String(this.$route.query.name);
+    if(typeof(this.$route.query.location) !== 'undefined')
+      this.location = String(this.$route.query.location);
     return;
-  }
+  },
 
 });
 
@@ -137,7 +145,7 @@ export default defineComponent({
         </div>
         <div class="divider"></div>
         <div>
-          <input name="specialization" id="specialization" type="text" v-model="specialization" placeholder="specialization" autocomplete="off"
+          <input name="specialization" id="specialization" type="text" v-model="specialization" placeholder="Specialization" autocomplete="off"
                               class="search-bar"></div>
         <div class="divider">
         </div>
