@@ -24,6 +24,35 @@ export interface Provider {
 
 export declare type AppointmentStatus = 'SCHEDULED' | 'PROCEEDING' | 'CANCELLED' | 'RESCHEDULED' | 'COMPLETED';
 
+export interface Patient{
+  name: string;
+  email: string;
+  gender: string;
+  address: string;
+  contact: string;
+  dateOfBirth: string;
+  id: number;
+  designation: string;
+  Insurance: Insurance;
+  upcomingAppointments: Appointment[];
+  patientVisitHistory: PatientVisitHistory[];
+}
+
+ //TODO remember to remove this from type once finished register form
+export interface RegisterPatient{
+  name: string;
+  email: string;
+  gender: string;
+  address: string;
+  contact: string;
+  dob: string;
+  patientId: number;
+  designation: string;
+  employer: string;
+  insurancePolicyNo: number;
+  insuranceNetwId: number;
+}
+
 export interface Appointment {
   id: number;
   providerId: number;
@@ -40,7 +69,23 @@ export interface Appointment {
   videoAppointment: boolean;
 }
 
-export interface AppointmentSlot {
+export interface PatientVisitHistory{
+  id: number;
+  patientId: number;
+  appDate: string;
+  providerName: string;
+  diagnosis: string;
+  prescription: string;
+  notes: string;
+}
+
+export interface Insurance{
+  id: number;
+  policeNo: number;
+  networkId: number;
+}
+
+export interface AppointmentSlot{
   appointmentSlotId: number;
   providerId: number;
   day: number;

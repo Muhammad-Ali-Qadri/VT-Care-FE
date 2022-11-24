@@ -42,4 +42,26 @@ export default {
         const temp = await fetch(url);
             return await temp.json();
     },
+
+    async getParameterizedProvider(genderSelected?: string, location?: string, nameQuery?:string, specialization?: string): Promise<Provider[]> {
+        let querystring = "?";
+        if (genderSelected !== 'undefined') {
+            querystring += "gender=" + genderSelected + "&";
+        }
+        if (location !== 'undefined'){
+            querystring += "location=" + location + "&";
+        }
+        if (nameQuery !== 'undefined'){
+            querystring += "name=" + nameQuery + "&";
+        }
+        if (specialization !== 'undefined'){
+            querystring += "specialization=" + specialization + "&";
+        }
+        if(querystring !== "?")
+            querystring = querystring.substring(0, querystring.length-1);
+
+        const url = apiUrl + "/searchproviders"+querystring;
+        const temp = await fetch(url);
+            return await temp.json();
+    }
 }
