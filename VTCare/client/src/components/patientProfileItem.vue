@@ -109,10 +109,9 @@ export default defineComponent({
 .each-div {
   border-bottom: solid 1px rgba(0, 0, 0, 0.2);
   padding: 1em 1em 2em 0;
-  width: 50em;
+  width: 35em;
 }
 .main-sec {
-  margin-left: 20em;
   margin-top: 3em;
   margin-bottom: 5em;
 }

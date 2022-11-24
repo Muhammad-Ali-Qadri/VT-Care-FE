@@ -1,4 +1,4 @@
-import { Appointment } from "@/types";
+import { Appointment, AppointmentStatus } from "@/types";
 import apiUrl from "./urlInfo";
 import moment from 'moment';
 
@@ -16,6 +16,25 @@ export default {
             },
         });
 
+        return await res.json();
+    },
+
+    async updateAppointmentStatus(apptId: number, apptStatus: AppointmentStatus) {
+        const url = apiUrl + "/appointments/" + apptId + "/updatestatus";
+        
+        const res = await fetch(url, {
+            method: "PATCH",
+            body: JSON.stringify(apptStatus),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    },
+
+    async getAppointments(id: number, userType: string): Promise<Appointment[]> {
+        const path = (userType === "Provider") ? "providers" : "patients";
+        const url = apiUrl + "/patients/" + id + "/appointments";
+        const res = await fetch(url);
         return await res.json();
     }
 }

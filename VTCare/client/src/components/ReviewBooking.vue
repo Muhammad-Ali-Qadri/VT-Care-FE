@@ -24,7 +24,7 @@ export default defineComponent({
                 this.appt.videoAppointment = true;
 
                 try {
-                    this.appt = await appointment.scheduleAppointment(this.appt); //TODO: Add to upcoming appointment in store.   
+                    this.appt = await appointment.scheduleAppointment(this.appt);
 
                     if (this.appt.id < 0) {
                         makeToast("Conflicting appointment found!", 'danger');
