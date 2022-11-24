@@ -11,7 +11,6 @@ import provider from "@/services/provider";
 // });
 
 const Providers = provider.getProviders();
-console.log(Providers);
 
 const bookList: BookItem[] = [
   {

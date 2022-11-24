@@ -8,7 +8,7 @@ export interface BookItem {
   isSuggested: boolean;
 }
 
-export interface Provider{
+export interface Provider {
   name: string;
   email: string;
   gender: string;
@@ -22,7 +22,9 @@ export interface Provider{
   availabilitySchedule: AppointmentSlot[];
 }
 
-export interface Appointment{
+export declare type AppointmentStatus = 'SCHEDULED' | 'PROCEEDING' | 'CANCELLED' | 'RESCHEDULED' | 'COMPLETED';
+
+export interface Appointment {
   id: number;
   providerId: number;
   patientId: number;
@@ -34,11 +36,11 @@ export interface Appointment{
   date: Date | string;
   time: string;
   url: string;
-  status: string;
+  status: AppointmentStatus;
   videoAppointment: boolean;
 }
 
-export interface AppointmentSlot{
+export interface AppointmentSlot {
   appointmentSlotId: number;
   providerId: number;
   day: number;
