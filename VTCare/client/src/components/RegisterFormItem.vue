@@ -1,5 +1,6 @@
 <script>
 import provider from "@/services/provider";
+import patient from "@/services/patient"
 import { defineComponent } from "vue";
 import makeToast from './toast/makeToast';
 
@@ -59,7 +60,17 @@ export default {
 
         // TODO: Patient register
         if (this.role === "Patient") {
-          this.$router.push({ name: "about" })
+          patient.registerPatient({
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            gender: this.gender,
+            dateOfBirth: this.dateOfBirth,
+            address: this.address,
+            contact: this.contact,
+          });
+          makeToast("Patient registered successfully!", 'success');
+          this.$router.push({ name: "login" });
         }
 
         // Provider register
