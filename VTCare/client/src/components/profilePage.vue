@@ -2,8 +2,8 @@
 
 import ProviderProfileItem from "@/components/providerProfileItem.vue";
 import PatientProfileItem from "@/components/patientProfileItem.vue";
-import { defineComponent, ref } from "vue";
-import { Appointment, Provider } from '@/types';
+import { defineComponent } from "vue";
+import { Appointment, User } from '@/types';
 import moment from 'moment';
 import appointment from '@/services/appointment';
 export default defineComponent({
@@ -16,7 +16,7 @@ export default defineComponent({
     return {
       userType: this.$store.getters['UserModule/getUserType'],
       isInSession: false,
-      user: {},
+      user: {} as User,
     }
   },
 
@@ -27,6 +27,15 @@ export default defineComponent({
 
     getFormattedTime(time: string) {
       return moment(time, "hh:mm:ss").format("hh:mm A");
+    },
+
+    getShownName(appt: Appointment){
+      if(this.userType !== "Patient"){
+        return appt.patientName;
+      }
+      else{
+        return "Dr. " + appt.providerName;
+      }
     },
 
     isPastDate(appt: Appointment) {
@@ -200,7 +209,7 @@ export default defineComponent({
           v-bind:class="(isPastDate(appt)) ? 'past-appointment' : ''">
           <b>{{ getFormattedDate(appt.date) }}</b>
           <span>At <b>{{ getFormattedTime(appt.time) }}</b></span>
-          <span>With <b>{{ appt.patientName }}</b></span>
+          <span>With <b>{{ getShownName(appt) }}</b></span>
           <a class="appointment-options"><i class="fa-solid fa-ellipsis-vertical"></i></a>
           <ul class="dropdown">
             <li v-if="showMeetingAttend(appt)"><a @click="openMeeting(appt)">Attend Meeting</a></li>

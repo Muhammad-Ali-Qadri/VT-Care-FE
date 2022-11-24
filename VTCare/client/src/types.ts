@@ -8,6 +8,18 @@ export interface BookItem {
   isSuggested: boolean;
 }
 
+//TODO: Make it parent of users and comply with API and other usages.
+export interface User{
+  id: number;
+  name: string;
+  email: string;
+  gender: string;
+  address: string;
+  contact: string;
+  dateOfBirth: string;
+  upcomingAppointments: Appointment[];
+}
+
 export interface Provider {
   name: string;
   email: string;

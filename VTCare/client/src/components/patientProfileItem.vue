@@ -112,7 +112,6 @@ export default defineComponent({
   width: 35em;
 }
 .main-sec {
-  margin-left: 15em;
   margin-top: 3em;
   margin-bottom: 5em;
 }

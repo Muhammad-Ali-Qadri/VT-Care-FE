@@ -16,14 +16,12 @@ const UserModule: Module<any, any> = {
         SET_USER_TYPE(state, type) {
             state.userType = type;
         },
-
         REFRESH_USER_APPOINTMENTS(state, appts){
             state.userObj.upcomingAppointments = appts;
         }
     },
     actions: {
         async setUserObj(context, user) {
-            // TODO: call patient if user type is patient
             if (context.state.userType === 'Patient') {
                 const userdata = await patient.getPatient(user);
                 context.commit("SET_USER_OBJ", userdata);
