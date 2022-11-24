@@ -310,11 +310,6 @@ export default {
 
       </div>
     </div>
-    <div>
-      <button @click="enablePopup">
-        press me!
-      </button>
-    </div>
     <notes-popup v-if="popupTrigger"
                  @closePopup="closeNotes"></notes-popup>
   </section>

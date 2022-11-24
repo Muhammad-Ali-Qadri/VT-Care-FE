@@ -22,7 +22,7 @@
                     <label for="diagnosis">Diagnosis</label>
                   </div>
                   <div class="textarea-parent">
-                    <textarea id="diagnosis"></textarea>
+                    <textarea id="diagnosis" v-model="diagnosis"></textarea>
                   </div>
               </div>
               <div class="prescription-content">
@@ -30,7 +30,7 @@
                     <label for="prescriptions">Prescriptions</label>
                   </div>
                   <div class="textarea-parent">
-                    <textarea id="prescriptions"></textarea>
+                    <textarea id="prescriptions" v-model="prescriptions"></textarea>
                   </div>
               </div>
               <div class="notes-content">
@@ -38,7 +38,7 @@
                     <label for="notes">Notes</label>
                   </div>
                   <div class="textarea-parent">
-                    <textarea id="notes"></textarea>
+                    <textarea id="notes" v-model="notes"></textarea>
                   </div>
               </div>
               <div class="checkbox-submit">
@@ -47,7 +47,7 @@
                   <label for="signed">Ready to submit?</label>
                 </div>
                 <div class="submit-button">
-                  <button :disabled="!checked">
+                  <button :disabled="!checked" @click="persistAndClose">
                     submit
                   </button>
                 </div>
@@ -61,16 +61,37 @@
 </template>
 
 <script>
+import patient from "@/services/patient.ts";
+import makeToast from './toast/makeToast';
 export default {
   name: "NotesPopup",
   methods: {
     closeModal() {
       this.$emit('closePopup');
     },
+
+    async persistAndClose() {
+      const resp = await patient.addHistory({
+        patientId: 25,
+        apptDate: "2022-11-25",
+        providerName: "Benzino", // make these 3 properties at some point (integration time)
+        diagnosis: this.diagnosis,
+        prescription: this.prescription,
+        notes: this.notes,
+      });
+      if(resp.id !== -1)
+        makeToast("Notes added", 'success');
+      else
+        makeToast("Issue saving notes", 'danger');
+      this.$emit('closePopup');
+    }
   },
   data() {
     return{
       checked: false,
+      notes: "",
+      prescriptions: "",
+      diagnosis: "",
     }
   },
 }

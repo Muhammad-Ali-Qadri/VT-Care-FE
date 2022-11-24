@@ -46,3 +46,12 @@ export interface AppointmentSlot{
   endTime: string;
   slotDuration: number;
 }
+
+export interface PatientHistory{
+  patientId: number;
+  apptDate: string;
+  providerName: string;
+  diagnosis: string;
+  prescription: string;
+  notes: string;
+}
