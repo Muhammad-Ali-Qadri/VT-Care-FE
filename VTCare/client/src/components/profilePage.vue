@@ -8,7 +8,7 @@ import { defineComponent, ref } from "vue";
 import { Appointment, Provider, User } from '@/types';
 import moment from 'moment';
 import appointment from '@/services/appointment';
-import NotesPopup from './NotesPopup';
+import NotesPopup from './NotesPopup.vue';
 import provider from "@/services/provider";
 
 export default defineComponent({
@@ -87,6 +87,7 @@ export default defineComponent({
 
     async openMeeting(appt: Appointment) {
       await appointment.updateAppointmentStatus(appt.id, 'PROCEEDING');
+      this.selectedAppointment = appt;
 
       const win = window.open(appt.url);
 
@@ -103,6 +104,7 @@ export default defineComponent({
       }
       else {
         //TODO: Add logic here to show meeting notes popup.
+        this.popupTrigger.displayNotes = !this.popupTrigger.displayNotes;
       }
     },
 
@@ -142,6 +144,8 @@ export default defineComponent({
     //TODO: Call when notes popup is submitted.
     async completeAppointment(apptId: number) {
       await appointment.updateAppointmentStatus(apptId, 'COMPLETED');
+      this.popupTrigger.displayNotes= !this.popupTrigger.displayNotes;
+      await this.reload();
     },
 
     async reload() {
@@ -295,10 +299,17 @@ export default defineComponent({
             <li v-if="item.canEdit"><a @click="confirmCancelAppointment(item.appt.id)">Cancel</a></li>
             <li v-if="userType === 'Provider'"><a>View Patient History</a></li>
           </ul>
-
         </div>
       </div>
       <h1 class="appointment-title no-show" v-else> No appointments to show</h1>
+    </section>
+    <section>
+      <notes-popup v-if="popupTrigger.displayNotes"
+                   @closePopup="popupTrigger.displayNotes=!popupTrigger.displayNotes"
+                   @submitNotes="completeAppointment(selectedAppointment.id)"
+                   v-bind:apptDate="selectedAppointment.date" v-bind:patientName="selectedAppointment.patientName" v-bind:patientId="selectedAppointment.patientId"
+      >
+      </notes-popup>
     </section>
   </div>
 </template>

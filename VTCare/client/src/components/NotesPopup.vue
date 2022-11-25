@@ -1,5 +1,5 @@
 <template>
-  <Transition enter-active-class="animated fadeIn zoomIn" leave-active-class="animated fadeOut zoomOut">
+  <Transition>
     <div class="modal-mask">
       <div class="modal-wrapper">
         <div class="modal-container">
@@ -9,10 +9,10 @@
             </div>
             <div class="notes-header-body">
               <div class="patient-info">
-                Banana Johnson
+                {{ patientName }}
               </div>
               <div class="Date">
-                11/07/2022
+                {{apptDate}}
               </div>
             </div>
           </div>
@@ -27,10 +27,10 @@
               </div>
               <div class="prescription-content">
                   <div>
-                    <label for="prescriptions">Prescriptions</label>
+                    <label for="prescription">prescription</label>
                   </div>
                   <div class="textarea-parent">
-                    <textarea id="prescriptions" v-model="prescriptions"></textarea>
+                    <textarea id="prescription" v-model="prescription"></textarea>
                   </div>
               </div>
               <div class="notes-content">
@@ -46,8 +46,8 @@
                   <input type="checkbox" id="signed" name="signed" @click="checked=!checked">
                   <label for="signed">Ready to submit?</label>
                 </div>
-                <div class="submit-button">
-                  <button :disabled="!checked" @click="persistAndClose">
+                <div class="button-container">
+                  <button :disabled="!checked" @click="persistAndClose" class="ready-button">
                     submit
                   </button>
                 </div>
@@ -65,6 +65,11 @@ import patient from "@/services/patient.ts";
 import makeToast from './toast/makeToast';
 export default {
   name: "NotesPopup",
+  props: {
+      apptDate:String,
+      patientName:String,
+      patientId: Number,
+  },
   methods: {
     closeModal() {
       this.$emit('closePopup');
@@ -72,9 +77,9 @@ export default {
 
     async persistAndClose() {
       const resp = await patient.addHistory({
-        patientId: 25,
-        apptDate: "2022-11-25",
-        providerName: "Benzino", // make these 3 properties at some point (integration time)
+        patientId: this.patientId,
+        apptDate: this.apptDate,
+        providerName: this.patientName, // make these 3 properties at some point (integration time)
         diagnosis: this.diagnosis,
         prescription: this.prescription,
         notes: this.notes,
@@ -83,14 +88,14 @@ export default {
         makeToast("Notes added", 'success');
       else
         makeToast("Issue saving notes", 'danger');
-      this.$emit('closePopup');
+      this.$emit('submitNotes');
     }
   },
   data() {
     return{
       checked: false,
       notes: "",
-      prescriptions: "",
+      prescription: "",
       diagnosis: "",
     }
   },
@@ -183,4 +188,45 @@ textarea{
   height: 100%;
   box-sizing: border-box;
 }
+
+.checkbox-submit{
+  display: flex;
+  flex-flow: column wrap;
+  justify-content: start;
+  row-gap: 1em;
+}
+
+.checkbox{
+  display: flex;
+  justify-content: left;
+}
+
+.ready-button {
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  font-size: 14px;
+  line-height: 1em;
+  height: 2em;
+  justify-content: center;
+  padding: 0px;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  animation: 0.1s ease-out 0s 1 normal forwards running kVDtSm;
+  cursor: pointer;
+  background-color: rgb(255, 240, 75);
+  border: 1px solid;
+  color: rgb(0, 35, 75);
+  flex: 0 0 auto;
+  width: 5em;
+  margin: 0px 8px 8px 0px;
+}
+
+.ready-button:disabled{
+  background-color: gray;
+  opacity:50%;
+  cursor:initial;
+}
+
 </style>

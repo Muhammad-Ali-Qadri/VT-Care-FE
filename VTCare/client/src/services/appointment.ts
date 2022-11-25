@@ -55,7 +55,7 @@ export default {
 
     async getAppointments(id: number, userType: string): Promise<Appointment[]> {
         const path = (userType === "Provider") ? "providers" : "patients";
-        const url = apiUrl + "/patients/" + id + "/appointments";
+        const url = apiUrl + "/" + path + "/" + id + "/appointments";
         const res = await fetch(url);
         return await res.json();
     }
