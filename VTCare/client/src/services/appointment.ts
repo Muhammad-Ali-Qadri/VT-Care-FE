@@ -19,9 +19,18 @@ export default {
         return await res.json();
     },
 
+    async cancelAppointment(apptId: number) {
+        const url = apiUrl + "/appointments/" + apptId + "/cancel";
+
+        const res = await fetch(url, {
+            method: "PATCH"
+        });
+    },
+
+
     async updateAppointmentStatus(apptId: number, apptStatus: AppointmentStatus) {
         const url = apiUrl + "/appointments/" + apptId + "/updatestatus";
-        
+
         const res = await fetch(url, {
             method: "PATCH",
             body: JSON.stringify(apptStatus),

@@ -20,7 +20,8 @@ export default defineComponent({
         appt: Appointment,
         isCancelled: boolean,
         isPast: boolean,
-        showAttend: boolean
+        showAttend: boolean,
+        canEdit: boolean
       }[]
     }
   },
@@ -49,7 +50,7 @@ export default defineComponent({
       return inDate.isBefore(minDate) || appt.status === 'COMPLETED';
     },
 
-    showAttendMeeting(appt: Appointment){
+    showAttendMeeting(appt: Appointment) {
       return appt.status === 'PROCEEDING' || this.userType !== "Patient";
     },
 
@@ -58,11 +59,14 @@ export default defineComponent({
 
       user.upcomingAppointments.forEach(appt => {
         const past = this.isPastDate(appt);
+        const canEdit = !past && appt.status !== 'PROCEEDING' && appt.status !== 'CANCELLED';
+
         this.appointmentList.push({
           appt: appt,
           isCancelled: appt.status === 'CANCELLED',
           isPast: past,
-          showAttend: !past && this.showAttendMeeting(appt)
+          showAttend: !past && this.showAttendMeeting(appt),
+          canEdit: canEdit
         });
       });
     },
@@ -88,16 +92,30 @@ export default defineComponent({
       }
     },
 
+    async confirmCancelAppointment(apptId: number) {
+      const response = confirm("Are you sure you want to Cancel this appointment?");
+
+      if (response) {
+        await appointment.cancelAppointment(apptId);
+        await this.reload();
+      }
+    },
+
     //TODO: Call when notes popup is submitted. 
     async completeAppointment(apptId: number) {
       await appointment.updateAppointmentStatus(apptId, 'COMPLETED');
     },
+
+    async reload() {
+      this.appointmentList = [];
+      await this.$store.dispatch("UserModule/refreshAppointments");
+      this.makeAppointmentList();
+    }
   },
 
   async created() {
     //Get new list of appointments on reload.
-    await this.$store.dispatch("UserModule/refreshAppointments");
-    this.makeAppointmentList();
+    await this.reload();
   }
 });
 
@@ -225,14 +243,16 @@ export default defineComponent({
       <h1 class="appointment-title"> Appointments</h1>
       <div class="appointment-list" v-if="appointmentList.length > 0">
         <div class="appointment-list-item" v-for="item in appointmentList" :key="item"
-          :class="[(item.isPast) ? 'past-appointment' : '', (item.isCancelled) ? 'cancelled-appointment' : '']" >
+          :class="[(item.isPast) ? 'past-appointment' : '', (item.isCancelled) ? 'cancelled-appointment' : '']">
           <b>{{ getFormattedDate(item.appt.date) }}</b>
           <span>At <b>{{ getFormattedTime(item.appt.time) }}</b></span>
           <span>With <b>{{ getShownName(item.appt) }}</b></span>
           <a class="appointment-options"><i class="fa-solid fa-ellipsis-vertical"></i></a>
-          <ul class="dropdown">
-            <li v-if="item.showAttend"><a @click="openMeeting(item.appt)">Attend Meeting</a></li>
-            <li><a>View Patient History</a></li>
+          <ul v-if="!item.isCancelled || userType === 'Provider'" class="dropdown">
+            <li v-if="item.showAttend"><a @click="openMeeting(item.appt)">Attend</a></li>
+            <li v-if="item.canEdit"><a @click="openMeeting(item.appt)">Reschedule</a></li>
+            <li v-if="item.canEdit"><a @click="confirmCancelAppointment(item.appt.id)">Cancel</a></li>
+            <li v-if="userType === 'Provider'"><a>View Patient History</a></li>
           </ul>
 
         </div>

@@ -1,6 +1,6 @@
 <script lang="ts">
 
-import { Provider } from '@/types';
+import { Appointment, Provider } from '@/types';
 import moment from 'moment';
 
 import { defineComponent } from "vue";
@@ -27,19 +27,17 @@ export default defineComponent({
             this.$emit('slotSelected', slot, duration, date);
         },
 
-        constructFutureAppointments() {
-            const record: Record<string, Set<string>> = {};
-            (this.provider as Provider).upcomingAppointments.forEach(appt => {
+        constructFutureAppointments(appts: Appointment[]) {
+                appts?.forEach(appt => {
                 let dateStr = moment(appt.date).format("DD/MM/YYYY");
 
-                if (!record[dateStr]) {
-                    record[dateStr] = new Set<string>();
+                if (!this.appointmentTimes[dateStr]) {
+                    this.appointmentTimes[dateStr] = new Set<string>();
                 }
 
-                record[dateStr].add(moment(appt.time, 'hh:mm:ss').format("hh:mm A"));
+                if (appt.status === 'SCHEDULED' || appt.status === 'PROCEEDING')
+                this.appointmentTimes[dateStr].add(moment(appt.time, 'hh:mm:ss').format("hh:mm A"));
             });
-
-            this.appointmentTimes = record;
         },
 
         nextCycle() {
@@ -80,7 +78,7 @@ export default defineComponent({
                     while (!startTime.isSame(endTime)) {
                         let start = startTime.format("hh:mm A") as string;
                         let tempDate = date.format("DD/MM/YYYY") as string;
-                        
+
                         if (!(this.appointmentTimes[tempDate] != undefined && this.appointmentTimes[tempDate].has(start))) {
                             times.push({
                                 time: startTime.format("hh:mm A"),
@@ -132,7 +130,8 @@ export default defineComponent({
         }
     },
     created() {
-        this.constructFutureAppointments();
+        this.constructFutureAppointments(this.provider.upcomingAppointments);
+        this.constructFutureAppointments(this.$store.getters["UserModule/getUser"]?.upcomingAppointments);
         this.generateSlotStructure();
     },
 });
