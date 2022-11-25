@@ -34,7 +34,7 @@ export interface Provider {
   availabilitySchedule: AppointmentSlot[];
 }
 
-export declare type AppointmentStatus = 'SCHEDULED' | 'PROCEEDING' | 'CANCELLED' | 'RESCHEDULED' | 'COMPLETED';
+export declare type AppointmentStatus = 'SCHEDULED' | 'PROCEEDING' | 'CANCELLED' | 'COMPLETED';
 
 export interface Patient{
   name: string;

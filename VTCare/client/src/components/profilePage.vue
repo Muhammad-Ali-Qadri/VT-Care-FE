@@ -16,7 +16,12 @@ export default defineComponent({
     return {
       userType: this.$store.getters['UserModule/getUserType'],
       isInSession: false,
-      user: {} as User,
+      appointmentList: [] as {
+        appt: Appointment,
+        isCancelled: boolean,
+        isPast: boolean,
+        showAttend: boolean
+      }[]
     }
   },
 
@@ -29,11 +34,11 @@ export default defineComponent({
       return moment(time, "hh:mm:ss").format("hh:mm A");
     },
 
-    getShownName(appt: Appointment){
-      if(this.userType !== "Patient"){
+    getShownName(appt: Appointment) {
+      if (this.userType !== "Patient") {
         return appt.patientName;
       }
-      else{
+      else {
         return "Dr. " + appt.providerName;
       }
     },
@@ -44,12 +49,22 @@ export default defineComponent({
       return inDate.isBefore(minDate) || appt.status === 'COMPLETED';
     },
 
-    showMeetingAttend(appt: Appointment) {
-      if (this.isPastDate(appt)) {
-        return false;
-      }
+    showAttendMeeting(appt: Appointment){
+      return appt.status === 'PROCEEDING' || this.userType !== "Patient";
+    },
 
-      return appt.status == 'PROCEEDING' || this.userType !== "Patient";
+    makeAppointmentList() {
+      const user = this.$store.getters["UserModule/getUser"] as User;
+
+      user.upcomingAppointments.forEach(appt => {
+        const past = this.isPastDate(appt);
+        this.appointmentList.push({
+          appt: appt,
+          isCancelled: appt.status === 'CANCELLED',
+          isPast: past,
+          showAttend: !past && this.showAttendMeeting(appt)
+        });
+      });
     },
 
     async openMeeting(appt: Appointment) {
@@ -76,13 +91,13 @@ export default defineComponent({
     //TODO: Call when notes popup is submitted. 
     async completeAppointment(apptId: number) {
       await appointment.updateAppointmentStatus(apptId, 'COMPLETED');
-    }
+    },
   },
 
   async created() {
     //Get new list of appointments on reload.
     await this.$store.dispatch("UserModule/refreshAppointments");
-    this.user = this.$store.getters["UserModule/getUser"];
+    this.makeAppointmentList();
   }
 });
 
@@ -149,6 +164,10 @@ export default defineComponent({
   color: gray;
 }
 
+.cancelled-appointment {
+  color: red;
+}
+
 .past-appointment>.attend-meeting {
   display: none;
 }
@@ -204,15 +223,15 @@ export default defineComponent({
     </section>
     <section class="appointment-section">
       <h1 class="appointment-title"> Appointments</h1>
-      <div class="appointment-list" v-if="user.upcomingAppointments?.length > 0">
-        <div class="appointment-list-item" v-for="appt in user.upcomingAppointments" :key="appt"
-          v-bind:class="(isPastDate(appt)) ? 'past-appointment' : ''">
-          <b>{{ getFormattedDate(appt.date) }}</b>
-          <span>At <b>{{ getFormattedTime(appt.time) }}</b></span>
-          <span>With <b>{{ getShownName(appt) }}</b></span>
+      <div class="appointment-list" v-if="appointmentList.length > 0">
+        <div class="appointment-list-item" v-for="item in appointmentList" :key="item"
+          :class="[(item.isPast) ? 'past-appointment' : '', (item.isCancelled) ? 'cancelled-appointment' : '']" >
+          <b>{{ getFormattedDate(item.appt.date) }}</b>
+          <span>At <b>{{ getFormattedTime(item.appt.time) }}</b></span>
+          <span>With <b>{{ getShownName(item.appt) }}</b></span>
           <a class="appointment-options"><i class="fa-solid fa-ellipsis-vertical"></i></a>
           <ul class="dropdown">
-            <li v-if="showMeetingAttend(appt)"><a @click="openMeeting(appt)">Attend Meeting</a></li>
+            <li v-if="item.showAttend"><a @click="openMeeting(item.appt)">Attend Meeting</a></li>
             <li><a>View Patient History</a></li>
           </ul>
 
