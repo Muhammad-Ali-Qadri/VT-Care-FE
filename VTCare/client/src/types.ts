@@ -50,21 +50,6 @@ export interface Patient{
   patientVisitHistory: PatientVisitHistory[];
 }
 
- //TODO remember to remove this from type once finished register form
-export interface RegisterPatient{
-  name: string;
-  email: string;
-  gender: string;
-  address: string;
-  contact: string;
-  dob: string;
-  patientId: number;
-  designation: string;
-  employer: string;
-  insurancePolicyNo: number;
-  insuranceNetwId: number;
-}
-
 export interface Appointment {
   id: number;
   providerId: number;

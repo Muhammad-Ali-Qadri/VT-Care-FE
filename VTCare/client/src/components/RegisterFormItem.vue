@@ -16,8 +16,18 @@ export default {
       address: "",
       gender: "",
       role: "",
+
+      // fields for providers
       experience: "",
       specialization: "",
+
+      // fields for patients
+      designation: "",
+      employer: "",
+      hasInsurance: "",
+      insurancePolicyNo: 0,
+      insuranceNetwId: 0,
+
       // check if fields are valid
       isValidName: true,
       isValidDate: true,
@@ -29,6 +39,9 @@ export default {
       isValidRole: true,
       isValidExp: true,
       isValidSpe: true,
+      isValidIns: true,
+      isValidInsPolicyNo: true,
+      isValidInsNetId: true,
     };
   },
 
@@ -60,17 +73,53 @@ export default {
 
         // TODO: Patient register
         if (this.role === "Patient") {
-          patient.registerPatient({
-            name: this.name,
-            email: this.email,
-            password: this.password,
-            gender: this.gender,
-            dateOfBirth: this.dateOfBirth,
-            address: this.address,
-            contact: this.contact,
-          });
-          makeToast("Patient registered successfully!", 'success');
-          this.$router.push({ name: "login" });
+          if (this.hasInsurance === "") {
+            this.isValidIns = false
+          }
+          else if (this.hasInsurance === "No"){
+            this.isValidIns = true;
+            patient.registerPatient({
+              name: this.name,
+              email: this.email,
+              password: this.password,
+              gender: this.gender,
+              dob: this.dateOfBirth,
+              address: this.address,
+              contact: this.contact,
+              designation: this.designation,
+              employer: this.employer,
+              insurancePolicyNo: 0,
+              insuranceNetwId: 0,
+            });
+            makeToast("Patient registered successfully!", 'success');
+            this.$router.push({ name: "login" });
+          }
+          else {
+            this.isValidIns = true;
+            if (this.insurancePolicyNo === 0 || this.insuranceNetwId === 0) {
+              this.isValidInsPolicyNo = false;
+              this.isValidInsNetId = false;
+            }else {
+              this.isValidInsPolicyNo = true;
+              this.isValidInsNetId = true;
+              patient.registerPatient({
+                name: this.name,
+                email: this.email,
+                password: this.password,
+                gender: this.gender,
+                dob: this.dateOfBirth,
+                address: this.address,
+                contact: this.contact,
+                designation: this.designation,
+                employer: this.employer,
+                insurancePolicyNo: this.insurancePolicyNo,
+                insuranceNetwId: this.insuranceNetwId,
+              });
+              makeToast("Patient registered successfully!", 'success');
+              this.$router.push({ name: "login" });
+            }
+          }
+
         }
 
         // Provider register
@@ -245,6 +294,47 @@ span {
           <input v-model="specialization" type="text"
             v-bind:class="isValidSpe ? 'spe-input' : 'spe-input err-input'" /><br />
           <h1 class="error-msg" v-if="!isValidSpe">Specialization could not be empty</h1>
+        </div>
+      </div>
+
+      <div v-if="this.role === 'Patient'">
+        <!-- Designation -->
+        <div class="info-sec">
+          <span>Designation</span><br />
+          <input v-model="designation" type="text"
+                 v-bind:class="'spe-input'" /><br />
+        </div>
+
+        <!-- Employer -->
+        <div class="info-sec">
+          <span>Employer</span><br />
+          <input v-model="employer" type="text"
+                 v-bind:class="'spe-input'" /><br />
+        </div>
+
+        <!-- ?Insurance or not -->
+        <div class="info-sec">
+          <span>Do you have Insurance</span><br />
+          <input type="radio" v-model="hasInsurance" value="Yes" />
+          <label style="margin-right: 10px">Yes</label>
+          <input type="radio" v-model="hasInsurance" value="No" />
+          <label>No</label><br />
+          <h1 class="error-msg" v-if="!isValidIns">Please select your insurance status</h1>
+          <div class="info-sec" v-if="hasInsurance === 'Yes'">
+            <div>
+            <span>Enter your Insurance Policy Number</span><br />
+              <input v-model="insurancePolicyNo" type=number
+                     v-bind:class="isValidInsPolicyNo ? 'spe-input' : 'spe-input err-input'" /><br />
+              <h1 class="error-msg" v-if="!isValidInsPolicyNo">Insurance Policy Number could not be empty</h1>
+            </div>
+            <div>
+              <span>Enter your Insurance Network Number</span><br />
+              <input v-model="insuranceNetwId" type=number
+                     v-bind:class="isValidInsNetId ? 'spe-input' : 'spe-input err-input'" /><br />
+              <h1 class="error-msg" v-if="!isValidInsNetId">Insurance Network Number could not be empty</h1>
+            </div>
+          </div>
+
         </div>
       </div>
 
