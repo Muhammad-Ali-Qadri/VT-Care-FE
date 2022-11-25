@@ -19,9 +19,31 @@ export default {
         return await res.json();
     },
 
+    async cancelAppointment(apptId: number) {
+        const url = apiUrl + "/appointments/" + apptId + "/cancel";
+
+        const res = await fetch(url, {
+            method: "PATCH"
+        });
+    },
+    
+    async rescheduleAppointment(appt: Appointment) {
+        const url = apiUrl + "/appointments/" + appt.id + "/reschedule";
+        appt.date = moment(appt.date).format("MM-DD-YYYY");
+        appt.time = moment(appt.time, "hh:mm A").format("HH:mm");
+
+        const res = await fetch(url, {
+            method: "PATCH",
+            body: JSON.stringify(appt),
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+    },
+
     async updateAppointmentStatus(apptId: number, apptStatus: AppointmentStatus) {
         const url = apiUrl + "/appointments/" + apptId + "/updatestatus";
-        
+
         const res = await fetch(url, {
             method: "PATCH",
             body: JSON.stringify(apptStatus),

@@ -2,21 +2,37 @@
 
 import ProviderProfileItem from "@/components/providerProfileItem.vue";
 import PatientProfileItem from "@/components/patientProfileItem.vue";
-import { defineComponent } from "vue";
-import { Appointment, User } from '@/types';
+import providerSlotDetail from './ProviderSlotDetail.vue';
+
+import { defineComponent, ref } from "vue";
+import { Appointment, Provider, User } from '@/types';
 import moment from 'moment';
 import appointment from '@/services/appointment';
+import provider from "@/services/provider";
+
 export default defineComponent({
   components: {
     ProviderProfileItem,
     PatientProfileItem,
+    providerSlotDetail
   },
 
   data() {
     return {
       userType: this.$store.getters['UserModule/getUserType'],
       isInSession: false,
-      user: {} as User,
+      popupTrigger: ref({
+        rescheduleClick: false
+      }),
+      selectedProvider: {} as Provider,
+      selectedAppointment: {} as Appointment,
+      appointmentList: [] as {
+        appt: Appointment,
+        isCancelled: boolean,
+        isPast: boolean,
+        showAttend: boolean,
+        canEdit: boolean
+      }[]
     }
   },
 
@@ -29,11 +45,11 @@ export default defineComponent({
       return moment(time, "hh:mm:ss").format("hh:mm A");
     },
 
-    getShownName(appt: Appointment){
-      if(this.userType !== "Patient"){
+    getShownName(appt: Appointment) {
+      if (this.userType !== "Patient") {
         return appt.patientName;
       }
-      else{
+      else {
         return "Dr. " + appt.providerName;
       }
     },
@@ -44,12 +60,25 @@ export default defineComponent({
       return inDate.isBefore(minDate) || appt.status === 'COMPLETED';
     },
 
-    showMeetingAttend(appt: Appointment) {
-      if (this.isPastDate(appt)) {
-        return false;
-      }
+    showAttendMeeting(appt: Appointment) {
+      return appt.status === 'PROCEEDING' || this.userType !== "Patient";
+    },
 
-      return appt.status == 'PROCEEDING' || this.userType !== "Patient";
+    makeAppointmentList() {
+      const user = this.$store.getters["UserModule/getUser"] as User;
+
+      user.upcomingAppointments.forEach(appt => {
+        const past = this.isPastDate(appt);
+        const canEdit = !past && appt.status !== 'PROCEEDING' && appt.status !== 'CANCELLED';
+
+        this.appointmentList.push({
+          appt: appt,
+          isCancelled: appt.status === 'CANCELLED',
+          isPast: past,
+          showAttend: !past && this.showAttendMeeting(appt),
+          canEdit: canEdit
+        });
+      });
     },
 
     async openMeeting(appt: Appointment) {
@@ -73,16 +102,54 @@ export default defineComponent({
       }
     },
 
+    async confirmCancelAppointment(apptId: number) {
+      const response = confirm("Are you sure you want to Cancel this appointment?");
+
+      if (response) {
+        await appointment.cancelAppointment(apptId);
+        await this.reload();
+      }
+    },
+
+    async rescheduleClick(appt: Appointment) {
+      this.selectedAppointment = appt;
+      this.selectedProvider = await provider.getProvider(appt.providerId);
+      this.popupTrigger.rescheduleClick = !this.popupTrigger.rescheduleClick;
+    },
+
+    async rescheduleSlotSelected(slot: string, duration: number, date: moment.Moment) {
+      this.closeModal();
+
+      const response = confirm("Are you sure you want to reschedule to " + date.format("DD MMM") + " at " + slot + " ?");
+
+      if (response) {
+        this.selectedAppointment.date = date.toDate();
+        this.selectedAppointment.time = slot;
+        await appointment.rescheduleAppointment(this.selectedAppointment);
+        await this.reload();
+      }
+    },
+
+
+    closeModal() {
+      this.popupTrigger.rescheduleClick = !this.popupTrigger.rescheduleClick;
+    },
+
     //TODO: Call when notes popup is submitted. 
     async completeAppointment(apptId: number) {
       await appointment.updateAppointmentStatus(apptId, 'COMPLETED');
+    },
+
+    async reload() {
+      this.appointmentList = [];
+      await this.$store.dispatch("UserModule/refreshAppointments");
+      this.makeAppointmentList();
     }
   },
 
   async created() {
     //Get new list of appointments on reload.
-    await this.$store.dispatch("UserModule/refreshAppointments");
-    this.user = this.$store.getters["UserModule/getUser"];
+    await this.reload();
   }
 });
 
@@ -149,6 +216,10 @@ export default defineComponent({
   color: gray;
 }
 
+.cancelled-appointment {
+  color: red;
+}
+
 .past-appointment>.attend-meeting {
   display: none;
 }
@@ -194,6 +265,9 @@ export default defineComponent({
 </style>
 
 <template>
+  <providerSlotDetail v-if="popupTrigger.rescheduleClick" :provider="selectedProvider" :imageCounter="1"
+    @closePopup="closeModal" @slotSelected="rescheduleSlotSelected"></providerSlotDetail>
+
   <div class="mask" v-if="isInSession"></div>
   <div class="profile-container">
     <section v-if="userType === 'Provider'">
@@ -204,16 +278,18 @@ export default defineComponent({
     </section>
     <section class="appointment-section">
       <h1 class="appointment-title"> Appointments</h1>
-      <div class="appointment-list" v-if="user.upcomingAppointments?.length > 0">
-        <div class="appointment-list-item" v-for="appt in user.upcomingAppointments" :key="appt"
-          v-bind:class="(isPastDate(appt)) ? 'past-appointment' : ''">
-          <b>{{ getFormattedDate(appt.date) }}</b>
-          <span>At <b>{{ getFormattedTime(appt.time) }}</b></span>
-          <span>With <b>{{ getShownName(appt) }}</b></span>
+      <div class="appointment-list" v-if="appointmentList.length > 0">
+        <div class="appointment-list-item" v-for="item in appointmentList" :key="item"
+          :class="[(item.isPast) ? 'past-appointment' : '', (item.isCancelled) ? 'cancelled-appointment' : '']">
+          <b>{{ getFormattedDate(item.appt.date) }}</b>
+          <span>At <b>{{ getFormattedTime(item.appt.time) }}</b></span>
+          <span>With <b>{{ getShownName(item.appt) }}</b></span>
           <a class="appointment-options"><i class="fa-solid fa-ellipsis-vertical"></i></a>
-          <ul class="dropdown">
-            <li v-if="showMeetingAttend(appt)"><a @click="openMeeting(appt)">Attend Meeting</a></li>
-            <li><a>View Patient History</a></li>
+          <ul v-if="!item.isCancelled || userType === 'Provider'" class="dropdown">
+            <li v-if="item.showAttend"><a @click="openMeeting(item.appt)">Attend</a></li>
+            <li v-if="item.canEdit"><a @click="rescheduleClick(item.appt)">Reschedule</a></li>
+            <li v-if="item.canEdit"><a @click="confirmCancelAppointment(item.appt.id)">Cancel</a></li>
+            <li v-if="userType === 'Provider'"><a>View Patient History</a></li>
           </ul>
 
         </div>
