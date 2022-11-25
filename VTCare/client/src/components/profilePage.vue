@@ -2,20 +2,30 @@
 
 import ProviderProfileItem from "@/components/providerProfileItem.vue";
 import PatientProfileItem from "@/components/patientProfileItem.vue";
-import { defineComponent } from "vue";
-import { Appointment, User } from '@/types';
+import providerSlotDetail from './ProviderSlotDetail.vue';
+
+import { defineComponent, ref } from "vue";
+import { Appointment, Provider, User } from '@/types';
 import moment from 'moment';
 import appointment from '@/services/appointment';
+import provider from "@/services/provider";
+
 export default defineComponent({
   components: {
     ProviderProfileItem,
     PatientProfileItem,
+    providerSlotDetail
   },
 
   data() {
     return {
       userType: this.$store.getters['UserModule/getUserType'],
       isInSession: false,
+      popupTrigger: ref({
+        rescheduleClick: false
+      }),
+      selectedProvider: {} as Provider,
+      selectedAppointment: {} as Appointment,
       appointmentList: [] as {
         appt: Appointment,
         isCancelled: boolean,
@@ -99,6 +109,30 @@ export default defineComponent({
         await appointment.cancelAppointment(apptId);
         await this.reload();
       }
+    },
+
+    async rescheduleClick(appt: Appointment) {
+      this.selectedAppointment = appt;
+      this.selectedProvider = await provider.getProvider(appt.providerId);
+      this.popupTrigger.rescheduleClick = !this.popupTrigger.rescheduleClick;
+    },
+
+    async rescheduleSlotSelected(slot: string, duration: number, date: moment.Moment) {
+      this.closeModal();
+
+      const response = confirm("Are you sure you want to reschedule to " + date.format("DD MMM") + " at " + slot + " ?");
+
+      if (response) {
+        this.selectedAppointment.date = date.toDate();
+        this.selectedAppointment.time = slot;
+        await appointment.rescheduleAppointment(this.selectedAppointment);
+        await this.reload();
+      }
+    },
+
+
+    closeModal() {
+      this.popupTrigger.rescheduleClick = !this.popupTrigger.rescheduleClick;
     },
 
     //TODO: Call when notes popup is submitted. 
@@ -231,6 +265,9 @@ export default defineComponent({
 </style>
 
 <template>
+  <providerSlotDetail v-if="popupTrigger.rescheduleClick" :provider="selectedProvider" :imageCounter="1"
+    @closePopup="closeModal" @slotSelected="rescheduleSlotSelected"></providerSlotDetail>
+
   <div class="mask" v-if="isInSession"></div>
   <div class="profile-container">
     <section v-if="userType === 'Provider'">
@@ -250,7 +287,7 @@ export default defineComponent({
           <a class="appointment-options"><i class="fa-solid fa-ellipsis-vertical"></i></a>
           <ul v-if="!item.isCancelled || userType === 'Provider'" class="dropdown">
             <li v-if="item.showAttend"><a @click="openMeeting(item.appt)">Attend</a></li>
-            <li v-if="item.canEdit"><a @click="openMeeting(item.appt)">Reschedule</a></li>
+            <li v-if="item.canEdit"><a @click="rescheduleClick(item.appt)">Reschedule</a></li>
             <li v-if="item.canEdit"><a @click="confirmCancelAppointment(item.appt.id)">Cancel</a></li>
             <li v-if="userType === 'Provider'"><a>View Patient History</a></li>
           </ul>
