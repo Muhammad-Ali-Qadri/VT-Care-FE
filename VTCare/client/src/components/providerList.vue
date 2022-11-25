@@ -6,7 +6,7 @@ import provider from "@/services/provider";
 import SearchBar from './SearchBar.vue';
 import providerSlotDetail from './ProviderSlotDetail.vue';
 import { defineComponent, ref } from "vue";
-import { Appointment, Provider } from "@/types";
+import { Appointment, Provider, User } from "@/types";
 
 export default defineComponent({
   name: "ProviderList",
@@ -84,14 +84,14 @@ export default defineComponent({
 
     async slotSelected(slot: string, duration: number, date: moment.Moment) {
       this.closeModal();
+      const user = this.$store.getters['UserModule/getUser'] as User;
       this.$store.dispatch("AppointmentModule/setAppointment", {
         providerId: this.selectedProvider.providerId,
         providerEmail: this.selectedProvider.email,
         providerName: this.selectedProvider.name,
-        //TODO: Change to patient once module completed.
-        patientId: this.selectedProvider.providerId,
-        patientEmail: this.selectedProvider.email,
-        patientName: this.selectedProvider.name,
+        patientId: user.id,
+        patientEmail: user.email,
+        patientName: user.name,
         date: date.toDate(),
         time: slot,
         duration: duration
@@ -109,19 +109,44 @@ export default defineComponent({
         });
       }
     },
-    checkIfParamsExist(){
-      return this.$route.query.gender === null && this.$route.query.specialization === null && this.$route.query.name === null &&
-          this.$route.query.location === null;
-    }
+
+    checkIfParamsExist() {
+      return this.$route.query.gender == null && this.$route.query.specialization == null && this.$route.query.name == null &&
+        this.$route.query.location == null;
+    },
+
+    async reload() {
+      if (this.checkIfParamsExist()) {
+        this.providers = await provider.getProviders();
+      }
+      else {
+        let genderSelected = undefined, specialization = undefined,
+          nameQuery = undefined, location = undefined;
+
+        if (this.$route.query.gender !== null)
+          genderSelected = String(this.$route.query.gender);
+        if (this.$route.query.specialization !== null)
+          specialization = String(this.$route.query.specialization);
+        if (this.$route.query.name !== null)
+          nameQuery = String(this.$route.query.name);
+        if (this.$route.query.location !== null)
+          location = String(this.$route.query.location);
+
+
+        this.providers = await provider.getParameterizedProvider(genderSelected, location, nameQuery, specialization); // note here we have params, but will need to change to match call.
+      }
+    },
   },
+
   async created() {
-    if(this.checkIfParamsExist() ) {
-      this.providers = await provider.getProviders();
-    }
-    else{
-      this.providers = await provider.getProviders(); // note here we have params, but will need to change to match call.
-      return;
-    }
+    await this.reload();
+  },
+  
+  watch: {
+    async "$route.query"(val) {
+      // call the method which loads your initial state
+      await this.reload();
+    },
   },
 });
 
@@ -228,7 +253,7 @@ export default defineComponent({
 <template>
   <search-bar></search-bar>
   <slot-detail v-if="popupTrigger.slotClick" :provider="selectedProvider" :imageCounter="imageCounter"
-               @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
+    @closePopup="closeModal" @slotSelected="slotSelected"></slot-detail>
   <ul id="provider-boxes" v-for="(provider, index) in providers" :key="provider">
     <li class="provider-box">
       <div class="provider-image">
@@ -244,7 +269,7 @@ export default defineComponent({
       <div class="appointment-times">
         <div class="slots-row" v-for="row in weeksToShow" :key="row">
           <button class="slot" v-for="schedule in makeNextSchedule(index, row)" :key="schedule"
-                  @click="clickSlot(index)" :disabled="schedule.appointments < 0">
+            @click="clickSlot(index)" :disabled="schedule.appointments < 0">
             <div>
               <div>{{ schedule.dayStr }}</div>
               <div>{{ schedule.date }}</div>
