@@ -86,7 +86,7 @@ export default defineComponent({
   methods: {
     logout: function () {
       this.$store.dispatch("UserModule/logout");
-      this.$router.push({name: 'home'})
+      this.$router.push({name: 'home'});
     }
   }
 });

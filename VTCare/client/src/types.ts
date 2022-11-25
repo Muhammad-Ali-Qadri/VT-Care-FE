@@ -8,7 +8,19 @@ export interface BookItem {
   isSuggested: boolean;
 }
 
-export interface Provider{
+//TODO: Make it parent of users and comply with API and other usages.
+export interface User{
+  id: number;
+  name: string;
+  email: string;
+  gender: string;
+  address: string;
+  contact: string;
+  dateOfBirth: string;
+  upcomingAppointments: Appointment[];
+}
+
+export interface Provider {
   name: string;
   email: string;
   gender: string;
@@ -21,6 +33,8 @@ export interface Provider{
   upcomingAppointments: Appointment[];
   availabilitySchedule: AppointmentSlot[];
 }
+
+export declare type AppointmentStatus = 'SCHEDULED' | 'PROCEEDING' | 'CANCELLED' | 'RESCHEDULED' | 'COMPLETED';
 
 export interface Patient{
   name: string;
@@ -36,7 +50,7 @@ export interface Patient{
   patientVisitHistory: PatientVisitHistory[];
 }
 
-export interface Appointment{
+export interface Appointment {
   id: number;
   providerId: number;
   patientId: number;
@@ -48,7 +62,7 @@ export interface Appointment{
   date: Date | string;
   time: string;
   url: string;
-  status: string;
+  status: AppointmentStatus;
   videoAppointment: boolean;
 }
 
@@ -67,7 +81,6 @@ export interface Insurance{
   policeNo: number;
   networkId: number;
 }
-
 
 export interface AppointmentSlot{
   appointmentSlotId: number;
