@@ -12,7 +12,7 @@
                 {{ patientName }}
               </div>
               <div class="Date">
-                {{apptDate}}
+                {{formatDate(apptDate)}}
               </div>
             </div>
           </div>
@@ -27,7 +27,7 @@
               </div>
               <div class="prescription-content">
                   <div>
-                    <label for="prescription">prescription</label>
+                    <label for="prescription">Prescription</label>
                   </div>
                   <div class="textarea-parent">
                     <textarea id="prescription" v-model="prescription"></textarea>
@@ -43,7 +43,7 @@
               </div>
               <div class="checkbox-submit">
                 <div class="checkbox">
-                  <input type="checkbox" id="signed" name="signed" @click="checked=!checked">
+                  <input type="checkbox" id="signed" name="signed" @click="checked=!checked">&nbsp;
                   <label for="signed">Ready to submit?</label>
                 </div>
                 <div class="button-container">
@@ -63,10 +63,12 @@
 <script>
 import patient from "@/services/patient.ts";
 import makeToast from './toast/makeToast';
+import moment from 'moment';
 export default {
   name: "NotesPopup",
   props: {
       apptDate:String,
+      providerName:String,
       patientName:String,
       patientId: Number,
   },
@@ -79,7 +81,7 @@ export default {
       const resp = await patient.addHistory({
         patientId: this.patientId,
         apptDate: this.apptDate,
-        providerName: this.patientName, // make these 3 properties at some point (integration time)
+        providerName: this.providerName, // make these 3 properties at some point (integration time)
         diagnosis: this.diagnosis,
         prescription: this.prescription,
         notes: this.notes,
@@ -89,6 +91,11 @@ export default {
       else
         makeToast("Issue saving notes", 'danger');
       this.$emit('submitNotes');
+    },
+
+    formatDate(date){
+      let x = moment(date);
+      return x.format("DD MMM yyyy");
     }
   },
   data() {
@@ -152,6 +159,8 @@ export default {
   display: flex;
   flex-flow: row wrap;
   justify-content: space-around;
+  font-size: 24px;
+  font-weight:bold;
 }
 
 .notes-container{
@@ -228,5 +237,7 @@ textarea{
   opacity:50%;
   cursor:initial;
 }
-
+label{
+  font-weight: bold;
+}
 </style>

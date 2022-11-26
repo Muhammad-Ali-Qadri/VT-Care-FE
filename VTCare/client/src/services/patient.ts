@@ -1,5 +1,5 @@
 import apiUrl from "@/services/urlInfo";
-import {Patient, PatientHistory} from "@/types";
+import {Patient, PatientVisitHistory} from "@/types";
 
 export default {
     async getPatient(id: number) {
@@ -27,7 +27,7 @@ export default {
                 console.log("Error fetching category data", reason);
             });
     },
-    addHistory(patHist : PatientHistory){
+    addHistory(patHist : PatientVisitHistory){
         const url = apiUrl + "/patients/addHistory";
         return fetch(url,{
             method: "POST",
@@ -46,5 +46,11 @@ export default {
                 console.log("Error fetching category data", reason);
                 return reason.json();
             });
+    },
+
+    async getHistory(patid : number):Promise<PatientVisitHistory[]>{
+        const url = apiUrl + "/patients/" + patid + "/getHistory";
+        const temp = await fetch(url);
+        return await temp.json();
     },
 }
