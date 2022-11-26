@@ -1,10 +1,9 @@
-import { Provider } from "@/types";
+import { Provider, RegisterProviderView } from "@/types";
 import apiUrl from "./urlInfo";
 
 export default {
     getProviders(): Promise<Provider[]>{
         const url = apiUrl + "/providers";
-        console.log("GET from " + url);
         return fetch(url)
             .then((response) => {
                 if (response.ok) {
@@ -17,7 +16,7 @@ export default {
             });
     },
 
-    registerProvider(providerInfo: Provider): Promise<Provider> {
+    registerProvider(providerInfo: RegisterProviderView): Promise<Provider> {
         const url = apiUrl + "/providers";
         return fetch(url,{
             method: "POST",

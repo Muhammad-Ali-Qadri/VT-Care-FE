@@ -34,6 +34,18 @@ export interface Provider {
   availabilitySchedule: AppointmentSlot[];
 }
 
+export interface RegisterProviderView{
+  name: string;
+  email: string;
+  gender: string;
+  address: string;
+  contact: string;
+  dateOfBirth: string;
+  password: string;
+  experience: number;
+  specialization:string;
+}
+
 export declare type AppointmentStatus = 'SCHEDULED' | 'PROCEEDING' | 'CANCELLED' | 'COMPLETED';
 
 export interface Patient{
@@ -48,6 +60,19 @@ export interface Patient{
   Insurance: Insurance;
   upcomingAppointments: Appointment[];
   patientVisitHistory: PatientVisitHistory[];
+}
+export interface RegisterPatientView{
+  name: string;
+  email: string;
+  gender: string;
+  address: string;
+  contact: string;
+  dob: string;
+  designation: string;
+  password: string;
+  employer: string;
+  insurancePolicyNo: number;
+  insuranceNetwId: number;
 }
 
 export interface Appointment {
@@ -90,3 +115,13 @@ export interface AppointmentSlot{
   endTime: string;
   slotDuration: number;
 }
+
+export interface PatientHistory{
+  patientId: number;
+  apptDate: string;
+  providerName: string;
+  diagnosis: string;
+  prescription: string;
+  notes: string;
+}
+

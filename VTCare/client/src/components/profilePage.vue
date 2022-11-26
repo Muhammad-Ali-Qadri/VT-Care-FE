@@ -8,21 +8,28 @@ import { defineComponent, ref } from "vue";
 import { Appointment, Provider, User } from '@/types';
 import moment from 'moment';
 import appointment from '@/services/appointment';
+import NotesPopup from './NotesPopup.vue';
 import provider from "@/services/provider";
+import PatientHistoryList from './PatientHistory.vue';
 
 export default defineComponent({
   components: {
     ProviderProfileItem,
     PatientProfileItem,
-    providerSlotDetail
+    "notes-popup" : NotesPopup,
+    providerSlotDetail,
+    "patient-history-list" : PatientHistoryList
   },
 
   data() {
     return {
       userType: this.$store.getters['UserModule/getUserType'],
       isInSession: false,
+      user: {} as User,
       popupTrigger: ref({
-        rescheduleClick: false
+        rescheduleClick: false,
+        displayNotes: false,
+        displayHistory: false,
       }),
       selectedProvider: {} as Provider,
       selectedAppointment: {} as Appointment,
@@ -83,6 +90,7 @@ export default defineComponent({
 
     async openMeeting(appt: Appointment) {
       await appointment.updateAppointmentStatus(appt.id, 'PROCEEDING');
+      this.selectedAppointment = appt;
 
       const win = window.open(appt.url);
 
@@ -99,6 +107,7 @@ export default defineComponent({
       }
       else {
         //TODO: Add logic here to show meeting notes popup.
+        this.popupTrigger.displayNotes = !this.popupTrigger.displayNotes;
       }
     },
 
@@ -135,15 +144,23 @@ export default defineComponent({
       this.popupTrigger.rescheduleClick = !this.popupTrigger.rescheduleClick;
     },
 
-    //TODO: Call when notes popup is submitted. 
+    //TODO: Call when notes popup is submitted.
     async completeAppointment(apptId: number) {
       await appointment.updateAppointmentStatus(apptId, 'COMPLETED');
+      this.popupTrigger.displayNotes= !this.popupTrigger.displayNotes;
+      await this.reload();
     },
 
     async reload() {
       this.appointmentList = [];
       await this.$store.dispatch("UserModule/refreshAppointments");
+      this.user = this.$store.getters['UserModule/getUser'];
       this.makeAppointmentList();
+    },
+
+    prepareHistoryList(appt: Appointment){
+      this.selectedAppointment = appt;
+      this.popupTrigger.displayHistory = !this.popupTrigger.displayHistory;
     }
   },
 
@@ -262,6 +279,15 @@ export default defineComponent({
   background-color: rgba(83, 79, 79, 0.5);
   display: table;
 }
+
+.ready-button {
+  background-color: rgb(0, 35, 75);
+  border-color: rgb(0, 35, 75);
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  cursor: pointer;
+  margin-bottom: 1em;
+}
 </style>
 
 <template>
@@ -278,6 +304,12 @@ export default defineComponent({
     </section>
     <section class="appointment-section">
       <h1 class="appointment-title"> Appointments</h1>
+      <h2>
+        <button v-if="userType==='Patient'" @click="prepareHistoryList({patientId: user.id, patientName: user.name})"
+        class="ready-button">
+            View History
+        </button>
+      </h2>
       <div class="appointment-list" v-if="appointmentList.length > 0">
         <div class="appointment-list-item" v-for="item in appointmentList" :key="item"
           :class="[(item.isPast) ? 'past-appointment' : '', (item.isCancelled) ? 'cancelled-appointment' : '']">
@@ -285,16 +317,26 @@ export default defineComponent({
           <span>At <b>{{ getFormattedTime(item.appt.time) }}</b></span>
           <span>With <b>{{ getShownName(item.appt) }}</b></span>
           <a class="appointment-options"><i class="fa-solid fa-ellipsis-vertical"></i></a>
-          <ul v-if="!item.isCancelled || userType === 'Provider'" class="dropdown">
+          <ul v-if="!item.isCancelled || userType === 'Provider'" class="dropdown"> <!--TODO: Need to fix empty circle showing for patient -->
             <li v-if="item.showAttend"><a @click="openMeeting(item.appt)">Attend</a></li>
             <li v-if="item.canEdit"><a @click="rescheduleClick(item.appt)">Reschedule</a></li>
             <li v-if="item.canEdit"><a @click="confirmCancelAppointment(item.appt.id)">Cancel</a></li>
-            <li v-if="userType === 'Provider'"><a>View Patient History</a></li>
+            <li v-if="userType === 'Provider'" @click="prepareHistoryList(item.appt)"><a>View Patient History</a></li>
           </ul>
-
         </div>
       </div>
       <h1 class="appointment-title no-show" v-else> No appointments to show</h1>
+    </section>
+    <section class="notesOrHistory">
+      <notes-popup v-if="popupTrigger.displayNotes"
+                   @closePopup="popupTrigger.displayNotes=!popupTrigger.displayNotes"
+                   @submitNotes="completeAppointment(selectedAppointment.id)"
+                   v-bind:patientName="selectedAppointment.patientName"
+                   v-bind:apptDate="selectedAppointment.date" v-bind:providerName="selectedAppointment.providerName" v-bind:patientId="selectedAppointment.patientId"
+      >
+      </notes-popup>
+      <patient-history-list v-if="popupTrigger.displayHistory" v-bind:patientName="selectedAppointment.patientName" v-bind:patientId="selectedAppointment.patientId" @closePopup="popupTrigger.displayHistory=!popupTrigger.displayHistory">
+      </patient-history-list>
     </section>
   </div>
 </template>
