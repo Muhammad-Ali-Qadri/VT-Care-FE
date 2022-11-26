@@ -39,31 +39,33 @@
 </template>
 
 <script lang="ts">
-import patient from "@/services/patient.ts";
+import patient from "@/services/patient";
 import makeToast from './toast/makeToast';
-import {PatientVisitHistory} from '@/types'
+import {PatientHistory} from '@/types'
+import { defineComponent } from 'vue';
 import moment from 'moment';
 
-export default {
+export default defineComponent({
   name: "PatientHistoryList",
   data() {
     return {
-      patientHist: [] as PatientVisitHistory[],
+      patientHist: [] as PatientHistory[],
       columns: [ {id: 0, field: "apptDate"},
         {id:1, field: "diagnosis"} , {id: 2, field: "prescription"}, {id:3, field: "notes"}],
     }
   },
 
-  props: {
-    patientName:String,
-    patientId: Number,
-  },
+  props: [
+    "patientName",
+    "patientId"
+  ],
+
   methods: {
     closeModal() {
       this.$emit('closePopup');
     },
 
-    formatDate(date){
+    formatDate(date: string){
       let x = moment(date);
       return x.format("DD MMM yyyy");
     }
@@ -73,7 +75,7 @@ export default {
     this.patientHist = await patient.getHistory(this.patientId);
   },
 
-}
+});
 </script>
 
 <style scoped>

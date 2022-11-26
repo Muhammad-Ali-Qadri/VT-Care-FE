@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
 import provider from "@/services/provider";
 import patient from "@/services/patient"
 import { defineComponent } from "vue";
 import makeToast from './toast/makeToast';
 
-export default {
+export default defineComponent( {
   data() {
     return {
       // fields data
@@ -140,7 +140,7 @@ export default {
               dateOfBirth: this.dateOfBirth,
               address: this.address,
               contact: this.contact,
-              experience: this.experience,
+              experience: parseInt(this.experience),
               specialization: this.specialization,
             });
 
@@ -151,7 +151,7 @@ export default {
       }
     },
   },
-};
+});
 </script>
 
 <style scoped>

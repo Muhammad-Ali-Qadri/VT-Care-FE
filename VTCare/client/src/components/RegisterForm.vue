@@ -1,5 +1,12 @@
-<script setup lang="ts">
+<script lang="ts">
 import RegisterFormItem from "@/components/RegisterFormItem.vue";
+import { defineComponent } from 'vue';
+export default defineComponent({
+  components: {
+    "register-form-item" : RegisterFormItem,
+  }
+});
+
 </script>
 
 <style scoped>
@@ -42,7 +49,7 @@ import RegisterFormItem from "@/components/RegisterFormItem.vue";
 <template>
   <div class="register-form">
     <div class="registration-header">
-      <P class="regis-title">Let's Get Started</P>
+      <p class="regis-title">Let's Get Started</p>
 
       <p class="login-title">
         <router-link to="/login">Already have one? Log in.</router-link>

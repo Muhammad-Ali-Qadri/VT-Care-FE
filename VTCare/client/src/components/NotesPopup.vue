@@ -60,18 +60,20 @@
   </Transition>
 </template>
 
-<script>
-import patient from "@/services/patient.ts";
+<script lang="ts">
+import patient from "@/services/patient";
 import makeToast from './toast/makeToast';
 import moment from 'moment';
-export default {
+import { defineComponent } from 'vue';
+export default defineComponent({
   name: "NotesPopup",
-  props: {
-      apptDate:String,
-      providerName:String,
-      patientName:String,
-      patientId: Number,
-  },
+  props: [
+      "apptDate",
+      "providerName",
+      "patientName",
+      "patientId",
+  ],
+
   methods: {
     closeModal() {
       this.$emit('closePopup');
@@ -80,7 +82,7 @@ export default {
     async persistAndClose() {
       const resp = await patient.addHistory({
         patientId: this.patientId,
-        apptDate: this.apptDate,
+        apptDate: this.apptDate as string,
         providerName: this.providerName, // make these 3 properties at some point (integration time)
         diagnosis: this.diagnosis,
         prescription: this.prescription,
@@ -93,7 +95,7 @@ export default {
       this.$emit('submitNotes');
     },
 
-    formatDate(date){
+    formatDate(date: string){
       let x = moment(date);
       return x.format("DD MMM yyyy");
     }
@@ -106,7 +108,7 @@ export default {
       diagnosis: "",
     }
   },
-}
+});
 </script>
 
 <style scoped>
