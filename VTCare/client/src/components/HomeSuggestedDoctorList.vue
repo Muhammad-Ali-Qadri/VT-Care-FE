@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { defineProps } from "vue"; // needed if you don't want an error below
-import { BookItem } from "@/types";
+import { Provider } from "@/types";
 import SuggestedDoctorListItem from "@/components/HomeSuggestedDoctorListItem.vue";
 const props = defineProps<{
-  bookList: BookItem[];
+  doctorList: Provider[];
 }>();
 </script>
 
@@ -33,8 +33,8 @@ ul {
     These providers are recommend based on reviews
   </h2>
   <ul>
-    <template v-for="book in bookList" :key="book.doctorId">
-      <suggested-doctor-list-item :book="book"></suggested-doctor-list-item>
+    <template v-for="(doc, ind) in doctorList" :key="doc">
+      <suggested-doctor-list-item :doctor="doc" :index="ind + 1"></suggested-doctor-list-item>
     </template>
   </ul>
 </template>
