@@ -1,59 +1,25 @@
-<script setup lang="ts">
+<script lang="ts">
 import { defineComponent } from "vue";
 import { BookItem } from "@/types";
 import SearchBar from "@/components/SearchBar.vue";
 import HomeSuggestedDoctorList from "@/components/HomeSuggestedDoctorList.vue";
 import provider from "@/services/provider";
+import { Provider} from "@/types";
 
-// export default defineComponent({
-//   name: "HomeView",
-//   components: { HomeSuggestedDoctorList, SearchBar },
-// });
+export default defineComponent({
+    name: "HomeView",
+    components: { HomeSuggestedDoctorList, SearchBar },
+    data() {
+      return {
+        providers: [] as Provider[],
+      };
+    },
 
-const Providers = provider.getProviders();
+    async created() {
+      this.providers = await provider.getProviders();
+    }
 
-const bookList: BookItem[] = [
-  {
-    doctorId: 1001,
-    name: "Doctor1",
-    author: "Primary Doctor",
-    price: 873,
-    isPublic: true,
-    isSuggested: true,
-  },
-  {
-    doctorId: 1002,
-    name: "Doctor2",
-    author: "Primary Doctor",
-    price: 363,
-    isPublic: false,
-    isSuggested: true,
-  },
-  {
-    doctorId: 1003,
-    name: "Doctor3",
-    author: "Primary Doctor",
-    price: 623,
-    isPublic: false,
-    isSuggested: true,
-  },
-  {
-    doctorId: 1004,
-    name: "Doctor4",
-    author: "Primary Doctor",
-    price: 714,
-    isPublic: true,
-    isSuggested: true,
-  },
-  {
-    doctorId: 1005,
-    name: "Doctor5",
-    author: "Primary Doctor",
-    price: 944,
-    isPublic: true,
-    isSuggested: true,
-  },
-];
+ });
 </script>
 
 <template>
@@ -84,7 +50,7 @@ const bookList: BookItem[] = [
     <!-- This is the recommended doctors on the home page -->
     <section>
       <home-suggested-doctor-list
-        :book-list="bookList"
+        :doctor-list="providers"
       ></home-suggested-doctor-list>
     </section>
   </div>

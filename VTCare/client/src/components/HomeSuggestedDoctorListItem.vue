@@ -1,22 +1,27 @@
-<script setup lang="ts">
-import { defineProps } from "vue";
-import { BookItem } from "@/types";
-const props = defineProps<{
-  book: BookItem;
-}>();
-const bookImageFileName = function (book: BookItem): string {
-  let name = book.name.toLowerCase();
-  name = name.replace(/ /g, "-");
-  name = name.replace(/'/g, "");
-  return `${name}.gif`;
-};
+<script lang="ts">
+import { defineComponent } from "vue";
+import { Provider } from "@/types";
+
+
+export default defineComponent({
+  props: ['doctor', 'index'],
+  methods: {
+    doctorImageFileName: function (doctor: Provider): string {
+      let name = "doctor" + this.index;
+      name = name.replace(/ /g, "-");
+      name = name.replace(/'/g, "");
+      return `${name}.gif`;
+    },
+  }
+
+});
 </script>
 <style scoped>
-.book-box-suggested:first-child {
+.doctor-box-suggested:first-child {
 
 }
 
-.book-box-suggested {
+.doctor-box-suggested {
   color: #2c5049;
   display: flex;
   flex-direction: column;
@@ -25,8 +30,6 @@ const bookImageFileName = function (book: BookItem): string {
   width: 15em;
   margin-top: 2em;
   margin-left: 11em;
-  /*border: 0.01rem solid #cbcbcb;*/
-  /*border-radius: 2px;*/
   padding: 5px;
   margin-bottom: 10em;
   justify-content: center;
@@ -36,39 +39,39 @@ const bookImageFileName = function (book: BookItem): string {
   width: 60%;
 }
 
-.book-title-suggested {
+.doctor-title-suggested {
   font-weight: bold;
 }
 
-.book-author-suggested {
+.doctor-author-suggested {
   color: cadetblue;
 }
 
-.book-image-suggested {
+.doctor-image-suggested {
   position: relative;
 }
 
 @media (max-width: 600px) {
-  .book-box-suggested {
+  .doctor-box-suggested {
     margin-left: 0em;
   }
 }
 </style>
 
 <template>
-  <li v-if="book.isSuggested" class="book-box-suggested">
-    <div class="book-image-suggested">
+  <li class="doctor-box-suggested">
+    <div class="doctor-image-suggested">
       <img
         class="doctor-pic"
-        :src="require('@/assets/Image/doctors/' + bookImageFileName(book))"
-        :alt="book.title"
+        :src="require('@/assets/Image/doctors/' + doctorImageFileName(doctor))"
+        :alt="doctor.name"
       />
     </div>
-    <div class="book-title-suggested">
-      <router-link to="/">{{ book.name }}</router-link>
+    <div class="doctor-title-suggested">
+      <router-link to="/">{{ doctor.name }}</router-link>
     </div>
-    <div class="book-author-suggested">
-      <router-link to="">{{ book.author }}</router-link>
+    <div class="doctor-author-suggested">
+      <router-link to="">{{ doctor.specialization }}</router-link>
     </div>
   </li>
 </template>
