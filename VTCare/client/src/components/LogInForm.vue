@@ -68,15 +68,19 @@ export default defineComponent({
         email: this.email,
         password: this.password,
         isProviderLogin: temp
-      }).then((data) => {
+      }).then(async (data) => {
         if (data === 0) {
           this.$router.push({ name: "login" });
         }
         else {
           this.$store.dispatch("UserModule/setUserType", this.role);
-          this.$store.dispatch("UserModule/setUserObj", data);
+          await this.$store.dispatch("UserModule/setUserObj", data);
 
           let dest = this.$route.query.redirect as string || "home";
+
+          if(this.role === "Provider"){
+            dest = "profilepage";
+          }
 
           this.$router.push({ name: dest });
         }

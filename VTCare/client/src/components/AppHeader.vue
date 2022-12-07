@@ -98,7 +98,8 @@ export default defineComponent({
     <div class="title-and-logo">
       <router-link to="/"><img class="logo" src="@/assets/Image/logo.png" /></router-link>
       <h1 class="text-logo">
-        <router-link to="/" style="color: #2c5049">VT Care</router-link>
+        <router-link v-if='$store.getters["UserModule/getUserType"] === "Provider"' to="/profile"  style="color: #2c5049">VT Care</router-link>
+        <router-link to="/" v-else style="color: #2c5049">VT Care</router-link>
       </h1>
     </div>
     <!--
